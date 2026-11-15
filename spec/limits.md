@@ -22,6 +22,7 @@ Generated Python and Rust modules must never be edited by hand.
 | MAX_WIRE_DEPTH | 16 | Wire container depth; root is zero |
 | MAX_WIRE_NODES | 8192 | Wire values visited including containers |
 | MAX_PROCESS_SECONDS | 30 | Maximum subprocess adapter wall-clock deadline |
+| MAX_BENCH_MEMORY_BYTES | 1073741824 | Isolated benchmark worker virtual address-space ceiling |
 
 Inputs exactly at a limit remain eligible for normal validation. Exceeding
 a limit refuses the input. Audit overflow evicts the oldest decision, never

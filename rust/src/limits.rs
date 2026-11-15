@@ -13,3 +13,4 @@ pub const MAX_WIRE_BYTES: usize = 65536;
 pub const MAX_WIRE_DEPTH: usize = 16;
 pub const MAX_WIRE_NODES: usize = 8192;
 pub const MAX_PROCESS_SECONDS: usize = 30;
+pub const MAX_BENCH_MEMORY_BYTES: usize = 1073741824;

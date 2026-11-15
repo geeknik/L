@@ -42,7 +42,7 @@ its [contract](spec/dogfood.md) distinguishes this exercise from the required
 standard-benchmark utility experiment.
 
 Still required before 1.0: production provider/transport integration, tested key
-custody provisioning, a real agent-utility experiment, licensing and release review.
+custody provisioning, a real agent-utility experiment and release review.
 See [the milestone checklist](spec/MILESTONE.md). Core SecurityGate state remains
 process-local; restarting it with an old subject would discard replay protection.
 
@@ -222,7 +222,8 @@ limits, in `CALCULUS.md`.
 
 1.0 means the DESIGN.md security gate, not a relabeled structural scanner.
 The remaining acceptance criteria are tracked in [spec/MILESTONE.md](spec/MILESTONE.md).
-`uv run --locked python scripts/release_check.py --results PATH` checks final
+`uv run --locked python scripts/release_check.py --results PATH --trace-root DIR` checks final
 version/license/source/evidence prerequisites before running all software checks.
-It currently refuses release; no real-agent results or license choice exist.
-No license, tag, publication or formal guarantee is implied by this checkout.
+It currently refuses release until the approved real-agent experiment is complete.
+The project is MIT licensed (see LICENSE); package version 1.0.0 is a release
+candidate until preflight passes. No tag, publication or formal guarantee is implied.

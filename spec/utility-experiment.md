@@ -30,6 +30,38 @@ actual boolean success outcomes. Missing, duplicated, unexpected or simulated
 runs fail. A results producer remains trusted evidence: a JSON checker cannot
 prove traces were genuinely measured. Independent trace review is required.
 
+## Retained artifacts and freeze binding
+
+Results contain exactly `protocol_sha256`, `protocol_commit`, `kind`, and `runs`.
+`protocol_commit` is a lowercase 40-character Git commit ID containing the exact
+approved bytes at `benchmarks/utility_protocol.json`. Release preflight requires
+that commit to be an ancestor of HEAD and the adapter revision to be an ancestor
+of (or equal to) that commit. The existing measured-source comparison still
+applies. This establishes version binding, not trustworthy real-world timing:
+Git histories and producer-generated traces can be fabricated. The operator must
+retain independent approval/predeclaration evidence and review experiment
+provenance; neither commit ancestry nor hashes authenticate a measurement.
+
+Both report CLI and release preflight require explicit `--trace-root`. Each arm's
+trace is a regular non-symlink file named `<trace_sha256>.json` directly within
+that directory. Read at most MAX_WIRE_BYTES per file, recompute SHA-256 over exact
+bytes, then strictly validate the JSON. Missing, substituted, oversized or
+malformed artifacts refuse. The arithmetic-only `evaluate` helper does not
+establish artifact validity and cannot suffice for release preflight.
+
+Each trace has exactly these fields: `version` (integer 1), `protocol_sha256`,
+`adapter_revision`, `id`, `seed`, `arm` (`baseline` or `gated`), `success`
+(boolean), `error` (null for acceptable evidence), `security_violations` (integer
+zero for acceptable evidence), and `events`. Header fields must match the frozen
+protocol and the corresponding run/arm. An arm cannot borrow another run's trace.
+`events` has 1..MAX_SECURITY_RECORDS entries with exactly `step` (sequential
+zero-based integer), `operation` (nonempty fixed diagnostic name), `status`
+(`ALLOW`, `DENY`, or `ERROR`), `input_sha256`, and `output_sha256` (lowercase
+64-character digests). The final event operation is `finish`. Event count is
+distinct from the model step budget: one model step may emit several decisions.
+Events retain no raw prompts, results, keys or signed statements. The adapter
+remains responsible for honest event generation and sanitized operation names.
+
 Report baseline/gated task success fractions and paired observed loss. Also bound
 the harmful paired regression probability (baseline success, gated failure) by
 the one-sided 95% exact binomial Clopper-Pearson upper confidence limit. Require

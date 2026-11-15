@@ -3,9 +3,11 @@ import argparse
 from hashlib import sha256
 import json
 import math
+import os
 from pathlib import Path
 import re
 import sys
+import stat
 from typing import Any
 
 from lang.limits import MAX_SECURITY_RECORDS, MAX_WIRE_BYTES
@@ -101,7 +103,9 @@ def evaluate(protocol_raw: bytes, protocol: Any, results: Any) -> dict[str, Any]
                 or type(task['seed']) is not int or not 0 <= task['seed'] <= 2147483647):
             raise EvidenceError('Invalid or repeated frozen task')
         identities[task['id']] = task['seed']
-    _fields(results, {'protocol_sha256','kind','runs'})
+    _fields(results, {'protocol_sha256','protocol_commit','kind','runs'})
+    if not _hash(results['protocol_commit'],40):
+        raise EvidenceError('Missing protocol freeze commit')
     if results['protocol_sha256'] != sha256(protocol_raw).hexdigest() or results['kind'] != 'real-agent':
         raise EvidenceError('Evidence does not match frozen real-agent protocol')
     runs = results['runs']
@@ -133,15 +137,63 @@ def evaluate(protocol_raw: bytes, protocol: Any, results: Any) -> dict[str, Any]
             'regression_upper_95':upper, 'max_loss':protocol['max_loss']}
 
 
+def verify_traces(protocol_raw: bytes, protocol: Any, results: Any, trace_root: Path) -> None:
+    """Verify retained bytes and bindings, not producer honesty or real execution."""
+    evaluate(protocol_raw, protocol, results)
+    directory = os.open(trace_root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        for run in results['runs']:
+            for arm in ('baseline', 'gated'):
+                digest = run[arm+'_trace_sha256']
+                descriptor = os.open(digest+'.json', os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK,
+                                     dir_fd=directory)
+                with os.fdopen(descriptor, 'rb') as stream:
+                    info = os.fstat(stream.fileno())
+                    if not stat.S_ISREG(info.st_mode) or info.st_size > MAX_WIRE_BYTES:
+                        raise EvidenceError('Invalid trace file')
+                    raw = stream.read(MAX_WIRE_BYTES+1)
+                if len(raw) > MAX_WIRE_BYTES or sha256(raw).hexdigest() != digest:
+                    raise EvidenceError('Trace digest mismatch')
+                trace = json.loads(raw.decode('utf-8'), object_pairs_hook=_pairs)
+                _fields(trace, {'version','protocol_sha256','adapter_revision','id','seed','arm',
+                                'success','error','security_violations','events'})
+                if (type(trace['version']) is not int or trace['version'] != 1
+                        or trace['protocol_sha256'] != results['protocol_sha256']
+                        or trace['adapter_revision'] != protocol['adapter_revision']
+                        or trace['id'] != run['id'] or type(trace['seed']) is not int
+                        or trace['seed'] != run['seed'] or trace['arm'] != arm
+                        or type(trace['success']) is not bool
+                        or trace['success'] != run[arm+'_success']
+                        or trace['error'] is not None or type(trace['security_violations']) is not int
+                        or trace['security_violations'] != run['security_violations']):
+                    raise EvidenceError('Trace metadata mismatch')
+                events = trace['events']
+                if type(events) is not list or not 1 <= len(events) <= MAX_SECURITY_RECORDS:
+                    raise EvidenceError('Invalid trace events')
+                for step, event in enumerate(events):
+                    _fields(event, {'step','operation','status','input_sha256','output_sha256'})
+                    if (type(event['step']) is not int or event['step'] != step
+                            or type(event['operation']) is not str or not event['operation'].strip()
+                            or event['status'] not in ('ALLOW','DENY','ERROR')
+                            or not _hash(event['input_sha256']) or not _hash(event['output_sha256'])):
+                        raise EvidenceError('Invalid trace event')
+                if events[-1]['operation'] != 'finish':
+                    raise EvidenceError('Missing final trace event')
+    finally:
+        os.close(directory)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('protocol',type=Path)
     parser.add_argument('results',type=Path)
+    parser.add_argument('--trace-root',type=Path,required=True)
     args = parser.parse_args()
     try:
         raw, protocol = read(args.protocol)
         _, results = read(args.results)
         report = evaluate(raw,protocol,results)
+        verify_traces(raw,protocol,results,args.trace_root)
         print(json.dumps(report,sort_keys=True,allow_nan=False))
         return 0 if report['pass'] else 1
     except (EvidenceError,OSError,ValueError,TypeError,UnicodeError,RecursionError):

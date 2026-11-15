@@ -4,9 +4,11 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tsd-security-gate"
-version = "0.1.0"
+version = "1.0.0"
 description = "Pre-release trust-typed language and security gate"
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.12"
 dependencies = [
     "pynacl==1.6.2",

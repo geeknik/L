@@ -2,7 +2,7 @@
 
 The operator selected the DESIGN.md security gate, including trusted authority,
 endorsement, revocation and taint semantics. Passing structural tests alone does
-not satisfy 1.0. No release, license or formal proof is implied.
+not satisfy 1.0. MIT is selected; no release or formal proof is implied.
 
 ## Implemented locally; verify with scripts/verify.py
 
@@ -53,7 +53,7 @@ not satisfy 1.0. No release, license or formal proof is implied.
 5. **Utility experiment:** select a standard agent benchmark, freeze benign task
    criteria and acceptable loss threshold before running gated/ungated comparison.
    Synthetic throughput is not evidence for this requirement.
-6. **Release assurance:** select repository license, repeat dependency advisory
+6. **Release assurance:** MIT selected; repeat dependency advisory
    checks at release, independent security review, tracked source/release process.
    No mechanized proof exists; do not advertise formal non-interference.
 
