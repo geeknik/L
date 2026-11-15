@@ -21,13 +21,18 @@ not satisfy 1.0. MIT is selected; no release or formal proof is implied.
 - Encrypted authority export/restore and atomic trust rotation into fresh
   subjects while preserving input taint, confidentiality and provenance.
 - Wheel/sdist builds, explicit package contents and isolated installation checks.
-- Frozen utility-protocol proposal, strict paired-evidence checker and final
+- Approved frozen utility protocol, strict paired-evidence checker and final
   release preflight that refuses missing license/revision/real measurements.
 - Live assistant dogfood through an actual gated file adapter: one benign task,
   two reads/one write, six refused negative probes. This exposed and fixed source
   quoted-string representation in both parsers. See DOGFOOD-2026-11-15.md; this
   exploratory exercise is not a paired standard-benchmark utility measurement.
 - CI action commit pins, tested Rust toolchain pin and dependency advisory gates.
+- Completed real-assistant paired AgentDojo evaluation: 93/97 successes in each
+  arm, zero harmful paired regressions, one-sided 95% upper bound 3.04 percentage
+  points (approved maximum 5). All 194 traces and eight ordinary failures are
+  retained in `release-evidence/utility-2026-11-15/`. This closes the approved
+  sandbox utility criterion, not production approval costs or deployment safety.
 
 ## Release obligations still open
 
@@ -35,8 +40,8 @@ not satisfy 1.0. MIT is selected; no release or formal proof is implied.
    in the exploratory dogfood profile. Broader deployment must ensure all relevant
    inputs and tool effects use the trusted host; the surrounding platform tools
    are not intercepted. A separate provider API is not needed for this dogfood
-   profile. The standard-benchmark adapter and full deployment boundary review
-   remain to be completed.
+   profile. The standard-benchmark adapter is implemented and isolated with
+   Bubblewrap; the full production deployment boundary review remains open.
 2. **Authority lifecycle:** secure key custody and rotation; authenticated subject
    provisioning; durable session/replay/revocation semantics and recovery tests.
    Encrypted backup/restore and trust rotation are implemented. The operator must
@@ -50,10 +55,7 @@ not satisfy 1.0. MIT is selected; no release or formal proof is implied.
    silently substitute projected AST text. Nonprivileged transcript expiry needs
    a host envelope if transcripts are persisted/replayed; the current host only
    processes freshly generated acts and does not expose replay ingestion.
-5. **Utility experiment:** select a standard agent benchmark, freeze benign task
-   criteria and acceptable loss threshold before running gated/ungated comparison.
-   Synthetic throughput is not evidence for this requirement.
-6. **Release assurance:** MIT selected; repeat dependency advisory
+5. **Release assurance:** MIT selected; repeat dependency advisory
    checks at release, independent security review, tracked source/release process.
    No mechanized proof exists; do not advertise formal non-interference.
 

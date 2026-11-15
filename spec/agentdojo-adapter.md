@@ -1,4 +1,4 @@
-# Frozen AgentDojo adapter proposal
+# Frozen AgentDojo adapter
 
 This adapter is experimental, not release evidence by itself. No real tasks may
 run until the operator approves the frozen utility protocol. Catalog mode emits
@@ -40,7 +40,7 @@ description and parameter schema to the registration hash. Only the upstream
 in-memory tool module allowlist is registered; no operating-system or network
 tool is exposed. The isolating launcher is still required defense in depth.
 
-The proposed policy grants low-integrity authority for every registered sandbox
+The approved policy grants low-integrity authority for every registered sandbox
 tool, scoped to bench.<tool_name>, a fresh host session and exact tool definition.
 No automatic endorsements are issued. Inputs and results remain low integrity.
 This measures utility of low-risk sandbox autonomy, not the cost of approving

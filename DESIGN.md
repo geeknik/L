@@ -8,8 +8,9 @@ Nov 13, 2026 · @Brian Carpenter
 > and MCP proxy are structural tools. A local reference host exercises actual
 > callbacks, confidentiality and provenance. Canonical wire/projection, encrypted
 > key restore/rotation and bounded process transport are implemented; deployment
-> provisioning and real utility measurement
-> remain release obligations; see [spec/MILESTONE.md](spec/MILESTONE.md).
+> provisioning and release review remain obligations. The approved sandbox
+> utility experiment is complete and passed its frozen criterion; see
+> [spec/MILESTONE.md](spec/MILESTONE.md).
 
 ## Thesis
 
@@ -121,7 +122,7 @@ Refused outright:
 
 Stop or redirect if either holds:
 
-- The proxy blocks the exploits but breaks more than a small fraction of benign tasks on a standard agent benchmark. Open question: the threshold is not yet set.
+- The enforcing host blocks the exploits but breaks more than the approved fraction of benign benchmark tasks. The frozen sandbox experiment requires baseline task success of at least 50% and a one-sided 95% upper bound on harmful paired regressions of at most 5 percentage points. See `spec/utility-run.md` for the approved policy, population and limits; this does not measure production endorsement costs.
 - An incumbent ships labels with runtime-assigned integrity first. Then contribute the proof and the conformance suite to theirs.
 
 First 30 days:

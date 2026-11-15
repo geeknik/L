@@ -1,9 +1,12 @@
 # Real-agent utility release evidence
 
-The checked-in `benchmarks/utility_protocol.json` is a proposal, NOT an approved
-protocol or a measurement. AgentDojo is a suitable standard tool-use benchmark;
-the referenced upstream revision was resolved read-only. No upstream code or
-tasks have been executed in this work. Source:
+The checked-in `benchmarks/utility_protocol.json` is approved and frozen at commit
+`4e8405926a5448114500f3777cb21a6b31c0ce89`. It is a protocol, not a measurement.
+The paired run uses all 97 registered AgentDojo v1.2.2 tasks and the isolated
+policy described in utility-run.md. All 194 arms completed and passed the frozen
+utility criterion; retained results and traces are in
+`release-evidence/utility-2026-11-15/`. Broader release obligations remain in
+MILESTONE.md. Upstream source:
 https://github.com/ethz-spylab/agentdojo/tree/089ed468cf3ed0322acc66b0211f26d9d90dbf60
 
 Before any release experiment, the operator must select/approve the benchmark

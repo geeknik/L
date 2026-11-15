@@ -1,4 +1,12 @@
-# Approved sandbox utility run preparation
+# Approved sandbox utility run
+
+Completed on 2026-11-15: baseline and gated each succeeded on 93/97 tasks, with
+zero harmful paired regressions. The one-sided 95% upper bound is 3.04118
+percentage points, satisfying the frozen 5-point maximum. All 194 arms ran once;
+there were no infrastructure errors or retries. Four tasks failed in both arms:
+travel/user_task_3, travel/user_task_11, travel/user_task_19, and
+workspace/user_task_11. Each reached the evaluator normally; no failure was
+excluded. See `release-evidence/utility-2026-11-15/README.md` for retained evidence.
 
 The operator selected MIT, the current assistant as agent, baseline success at
 least 50%, and a one-sided 95% harmful-regression upper bound at most 5 percentage

@@ -1,0 +1,42 @@
+{
+  "verified_at_utc": "2026-11-15T20:32:23.565226+00:00",
+  "adapter_revision": "afa580e0b827789d14962ba199f1743a7f3d5c5e",
+  "command": "uv run --locked python scripts/verify.py",
+  "exit_code": 0,
+  "python_tests": 341,
+  "rust_tests": 95,
+  "mypy_source_files": 21,
+  "conformance_tests": 10,
+  "differential_generated": 500,
+  "differential_replays": 9,
+  "local_log_sha256": "54293d2ad61bf82e6f4f9f1b38e7592b1b673ffcfb5bdef660fd4bdcbe28e534",
+  "advisories": [
+    {
+      "command": "uv tool run pip-audit==2.10.1 --require-hashes --disable-pip --requirement /tmp/tsd-release-runtime-audit.txt",
+      "exit_code": 0,
+      "result": "No known vulnerabilities found"
+    },
+    {
+      "command": "cargo-audit audit --file rust/Cargo.lock",
+      "tool_version": "0.22.0",
+      "exit_code": 0,
+      "dependencies": 39,
+      "result": "No advisories reported"
+    }
+  ],
+  "limits": "Local checks, not hosted CI or formal security proof. Utility measurements are separate.",
+  "source_distribution": {
+    "build": "uv build --sdist",
+    "verification": "cargo test --locked against rust/Cargo.toml extracted from the built full source archive",
+    "exit_code": 0,
+    "rust_tests": 95,
+    "license_and_shared_vectors_present": true,
+    "local_log_sha256": "5614757fe03ebafb06e040aedf812a54fbe71d1f8e42c5373ee18f7aa6598ee4"
+  },
+  "minimum_python": {
+    "command": "uv run --isolated --python 3.12 --locked python -W error::ResourceWarning -m unittest discover -s tests",
+    "exit_code": 0,
+    "python_tests": 341,
+    "local_log_sha256": "920a60550a3072cbc01a658dae2f2feb76939d1a3442ab2d7b0550b17d075b34"
+  }
+}

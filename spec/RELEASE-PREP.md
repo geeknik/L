@@ -1,5 +1,10 @@
 # Release preparation — 2026-11-15
 
+This is the historical preparation-phase report. Later work selected MIT,
+committed candidate version 1.0.0, froze the approved utility protocol and began
+paired execution. See `MILESTONE.md` and `utility-run.md` for current status;
+the results and blockers below describe this earlier phase only.
+
 Status: implementation preparation verified; final 1.0 release blocked by the
 outstanding decisions and measured deployment evidence below. No release, tag,
 push, license selection or version bump was performed.

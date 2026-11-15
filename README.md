@@ -41,8 +41,16 @@ probes, and a source-string defect found and fixed during integration. Run
 its [contract](spec/dogfood.md) distinguishes this exercise from the required
 standard-benchmark utility experiment.
 
+The approved paired AgentDojo experiment is complete: baseline and gated runs
+each passed 93/97 tasks, with zero harmful paired regressions. The computed
+one-sided 95% upper bound is 3.04 percentage points, below the approved 5-point
+threshold. All 194 arms and the four tasks failed by both arms are retained in
+[the evidence](release-evidence/utility-2026-11-15/README.md). This measures
+low-integrity sandbox autonomy, not production endorsement costs or security
+against malicious agents.
+
 Still required before 1.0: production provider/transport integration, tested key
-custody provisioning, a real agent-utility experiment and release review.
+custody provisioning and release review. The sandbox utility criterion is met.
 See [the milestone checklist](spec/MILESTONE.md). Core SecurityGate state remains
 process-local; restarting it with an old subject would discard replay protection.
 
