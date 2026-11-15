@@ -1,0 +1,13 @@
+{
+  "status": "unapproved",
+  "benchmark": "AgentDojo",
+  "revision": "089ed468cf3ed0322acc66b0211f26d9d90dbf60",
+  "model": "",
+  "settings": "",
+  "policy": "",
+  "adapter_revision": "",
+  "max_steps": 0,
+  "max_loss": null,
+  "min_baseline_success": null,
+  "tasks": []
+}

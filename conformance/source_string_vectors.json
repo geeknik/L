@@ -1,0 +1,12 @@
+{
+  "accept": [
+    {"literal":"\"\"", "value":""},
+    {"literal":"\"\"\"\"", "value":"\""},
+    {"literal":"\"a\"\"b\"", "value":"a\"b"},
+    {"literal":"\"{\"\"key\"\": \"\"value\"\"}\"", "value":"{\"key\": \"value\"}"},
+    {"literal":"\"line1\n  line2\"", "value":"line1\n  line2"},
+    {"literal":"\"literal\\n\\t\\\"", "value":"literal\\n\\t\\"},
+    {"literal":"\"雪\"\"😀\"", "value":"雪\"😀"}
+  ],
+  "reject": ["\"", "\"\"\"", "\"a\"\"", "\"a\"\"b"]
+}

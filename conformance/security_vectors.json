@@ -1,0 +1,20 @@
+{
+  "description": "PUBLIC TEST ONLY. Deterministic interoperability fixture; never trust this public test key in deployment.",
+  "public_key_hex": "cda944b790b528747f209eb9343a6f7c113612ba456ef8661835975b0127b989",
+  "issuer": "issuer",
+  "subject": "session:alice",
+  "source": "DIRECT cap:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa (scope=fs.read, exp=60, from=issuer) call tool:(srv:files, sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb) {path: \"/logs\"}",
+  "now": 110,
+  "grant": {
+    "payload_utf8": "{\"action_hash\":\"\",\"capability\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"expires_at\":200,\"integrity\":\"high\",\"issued_at\":100,\"issuer\":\"issuer\",\"kind\":\"grant\",\"nonce\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"scope\":\"fs.read\",\"subject\":\"session:alice\",\"tool_hash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"tool_principal\":\"srv:files\",\"version\":1}",
+    "signature_hex": "b7f30c14e223c16f9a531a596388e22874bdb6eb9ce4327fc1a8a43f57e31b98a7bab643d241d7daca6abc80cd4bfcbf2b6780c4653f16b910955e14624ea40b"
+  },
+  "endorse": {
+    "payload_utf8": "{\"action_hash\":\"960290e9602f7443205e2e9f5c1e94dfebb1ae40faef6607c1f9fd19559d6964\",\"capability\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"expires_at\":200,\"integrity\":\"high\",\"issued_at\":100,\"issuer\":\"issuer\",\"kind\":\"endorse\",\"nonce\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"scope\":\"fs.read\",\"subject\":\"session:alice\",\"tool_hash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"tool_principal\":\"srv:files\",\"version\":1}",
+    "signature_hex": "e78e03a47eb3c2cf7acd824d32d78b3fe0418d237c220331ee60c5d670a54c34d0ec99f0540b645718f24e1d94bedfcb1a8348990473798ef956281824475604"
+  },
+  "revoke": {
+    "payload_utf8": "{\"action_hash\":\"\",\"capability\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"expires_at\":200,\"integrity\":\"high\",\"issued_at\":100,\"issuer\":\"issuer\",\"kind\":\"revoke\",\"nonce\":\"3333333333333333333333333333333333333333333333333333333333333333\",\"scope\":\"fs.read\",\"subject\":\"session:alice\",\"tool_hash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"tool_principal\":\"srv:files\",\"version\":1}",
+    "signature_hex": "d007c3dac5180d434a5c74a51ddab5640317ffdd8207257b8915a7cd6c9f6fe4556c19a2b2ff1c116665938f349497e4df734199166135a3414897bff841a600"
+  }
+}

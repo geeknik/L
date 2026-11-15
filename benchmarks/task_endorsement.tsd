@@ -1,0 +1,5 @@
+# Benchmark task: integrity elevation via endorsement then high-integrity action
+ASSERT ev:(user:audit, sha256:feedfacebeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef) data:<opaque, approved_policy>
+ENDORSE (user:audit, sha256:feedfacebeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef) by:admin
+DIRECT cap:0011223344556677889900112233445566778899001122334455667788990011 (scope=fs.write, exp=60, from=user:audit) call tool:(srv:abcdef00, sha256:abcdef0000000000000000000000000000000000000000000000000000000000000) {path: "/etc/audit_log"}
+COMMIT (srv:abcdef00, sha256:abcdef0000000000000000000000000000000000000000000000000000000000000)

@@ -1,0 +1,292 @@
+[
+  {
+    "name": "principal_admin",
+    "invariant": "I5",
+    "source": "COMMIT (admin, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": true,
+    "principal": "admin",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "name": "principal_reviewer",
+    "invariant": "I5",
+    "source": "COMMIT (reviewer, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": true,
+    "principal": "reviewer",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "name": "principal_user:g",
+    "invariant": "I5",
+    "source": "COMMIT (user:g, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": true,
+    "principal": "user:g",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "name": "principal_user:123",
+    "invariant": "I5",
+    "source": "COMMIT (user:123, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": true,
+    "principal": "user:123",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "name": "principal_user:9c1e",
+    "invariant": "I5",
+    "source": "COMMIT (user:9c1e, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": true,
+    "principal": "user:9c1e",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "name": "principal_user:_name",
+    "invariant": "I5",
+    "source": "COMMIT (user:_name, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": true,
+    "principal": "user:_name",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "name": "principal_user:a:b",
+    "invariant": "I5",
+    "source": "COMMIT (user:a:b, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": true,
+    "principal": "user:a:b",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "name": "hash_abcdef00",
+    "invariant": "I5",
+    "source": "COMMIT (srv:abcdef00, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": true,
+    "principal": "srv:abcdef00",
+    "principal_hash": "abcdef00"
+  },
+  {
+    "name": "hash_00112233",
+    "invariant": "I5",
+    "source": "COMMIT (srv:00112233, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": true,
+    "principal": "srv:00112233",
+    "principal_hash": "00112233"
+  },
+  {
+    "name": "content_only_compat",
+    "invariant": "I5",
+    "source": "COMMIT (sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": true,
+    "principal": "anon",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "name": "malformed_user:",
+    "invariant": "I7",
+    "source": "COMMIT (user:, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "malformed_user::g",
+    "invariant": "I7",
+    "source": "COMMIT (user::g, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "malformed_user:g:",
+    "invariant": "I7",
+    "source": "COMMIT (user:g:, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "malformed_admin user",
+    "invariant": "I7",
+    "source": "COMMIT (admin user, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "malformed_user:a b",
+    "invariant": "I7",
+    "source": "COMMIT (user:a b, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "malformed_user:1 2",
+    "invariant": "I7",
+    "source": "COMMIT (user:1 2, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "malformed_user:\"g\"",
+    "invariant": "I7",
+    "source": "COMMIT (user:\"g\", sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "malformed_user:\u00e9",
+    "invariant": "I7",
+    "source": "COMMIT (user:\u00e9, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "malformed_user:g-h",
+    "invariant": "I7",
+    "source": "COMMIT (user:g-h, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "ascii_whitespace_9",
+    "invariant": "I5",
+    "source": "COMMIT\t(admin, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": true,
+    "principal": "admin",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "name": "ascii_whitespace_10",
+    "invariant": "I5",
+    "source": "COMMIT\n(admin, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": true,
+    "principal": "admin",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "name": "ascii_whitespace_11",
+    "invariant": "I5",
+    "source": "COMMIT\u000b(admin, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": true,
+    "principal": "admin",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "name": "ascii_whitespace_12",
+    "invariant": "I5",
+    "source": "COMMIT\f(admin, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": true,
+    "principal": "admin",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "name": "ascii_whitespace_13",
+    "invariant": "I5",
+    "source": "COMMIT\r(admin, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": true,
+    "principal": "admin",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "name": "ascii_whitespace_32",
+    "invariant": "I5",
+    "source": "COMMIT (admin, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": true,
+    "principal": "admin",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "name": "non_ascii_whitespace_28",
+    "invariant": "I7",
+    "source": "COMMIT\u001c(admin, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "non_ascii_whitespace_29",
+    "invariant": "I7",
+    "source": "COMMIT\u001d(admin, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "non_ascii_whitespace_30",
+    "invariant": "I7",
+    "source": "COMMIT\u001e(admin, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "non_ascii_whitespace_31",
+    "invariant": "I7",
+    "source": "COMMIT\u001f(admin, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "non_ascii_whitespace_133",
+    "invariant": "I7",
+    "source": "COMMIT\u0085(admin, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "non_ascii_whitespace_160",
+    "invariant": "I7",
+    "source": "COMMIT\u00a0(admin, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "non_ascii_whitespace_8195",
+    "invariant": "I7",
+    "source": "COMMIT\u2003(admin, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "signer_admin",
+    "invariant": "I5",
+    "source": "ENDORSE (user:g, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa) by:admin",
+    "accept": true,
+    "principal": "user:g",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signer": "admin"
+  },
+  {
+    "name": "signer_reviewer:top",
+    "invariant": "I5",
+    "source": "ENDORSE (user:g, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa) by:reviewer:top",
+    "accept": true,
+    "principal": "user:g",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signer": "reviewer:top"
+  },
+  {
+    "name": "signer_user:123",
+    "invariant": "I5",
+    "source": "ENDORSE (user:g, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa) by:user:123",
+    "accept": true,
+    "principal": "user:g",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signer": "user:123"
+  },
+  {
+    "name": "signer_srv:abcdef00",
+    "invariant": "I5",
+    "source": "ENDORSE (user:g, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa) by:srv:abcdef00",
+    "accept": true,
+    "principal": "user:g",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signer": "srv:abcdef00"
+  },
+  {
+    "name": "malformed_signer_",
+    "invariant": "I7",
+    "source": "ENDORSE (user:g, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  },
+  {
+    "name": "malformed_signer_ by:",
+    "invariant": "I7",
+    "source": "ENDORSE (user:g, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa) by:",
+    "accept": false
+  },
+  {
+    "name": "malformed_signer_ by:user:",
+    "invariant": "I7",
+    "source": "ENDORSE (user:g, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa) by:user:",
+    "accept": false
+  },
+  {
+    "name": "malformed_signer_ by:admin user",
+    "invariant": "I7",
+    "source": "ENDORSE (user:g, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa) by:admin user",
+    "accept": false
+  },
+  {
+    "name": "malformed_later_act",
+    "invariant": "I7",
+    "source": "COMMIT (admin, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)\nCOMMIT (user:, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
+    "accept": false
+  }
+]

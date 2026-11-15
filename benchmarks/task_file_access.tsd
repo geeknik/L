@@ -1,0 +1,4 @@
+# Benchmark task: file access — read file, then commit action
+ASSERT ev:(user:ops, sha256:ffeeddccbbaa998877665544332211ffeeddccbbaa998877665544332211ffeedd) data:<opaque, file_contents>
+DIRECT cap:0011223344556677889900112233445566778899001122334455667788990011 (scope=fs.read, exp=60, from=user:ops) call tool:(srv:abcdef00, sha256:abcdef0000000000000000000000000000000000000000000000000000000000000) {path: "/etc/config"}
+COMMIT (srv:abcdef00, sha256:abcdef000000000000000000000000000000000000000000000000000000000000000)

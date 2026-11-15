@@ -1,0 +1,10 @@
+{
+  "invariant": "I3",
+  "order": ["low", "medium", "high", "critical"],
+  "expected": [
+    ["low", "low", "low", "low"],
+    ["low", "medium", "medium", "medium"],
+    ["low", "medium", "high", "high"],
+    ["low", "medium", "high", "critical"]
+  ]
+}

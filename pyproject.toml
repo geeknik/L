@@ -1,0 +1,34 @@
+[build-system]
+requires = ["hatchling==1.33.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tsd-security-gate"
+version = "0.1.0"
+description = "Pre-release trust-typed language and security gate"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pynacl==1.6.2",
+]
+
+[project.scripts]
+tsd-scan = "cli.tsd_scanner:main"
+tsd-proxy = "proxy.mcp_proxy:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["lang", "gate", "proxy", "cli"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/lang", "/gate", "/proxy", "/cli", "/spec", "/tests", "/conformance",
+    "/demos", "/benchmarks", "/scripts", "/rust/src", "/rust/tests",
+    "/rust/examples", "/rust/Cargo.toml", "/rust/Cargo.lock", "/pyproject.toml",
+    "/uv.lock", "/README.md", "/DESIGN.md", "/CALCULUS.md", "/LICENSE",
+    "/.github/workflows",
+]
+
+[dependency-groups]
+dev = [
+    "mypy==2.4.1",
+]

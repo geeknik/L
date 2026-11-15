@@ -1,0 +1,43 @@
+# Local agent configuration and generated code graph
+.code-review-graph/
+AGENTS.md
+CLAUDE.md
+
+# Python bytecode and tool caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local Python environments and packaging output
+.venv/
+venv/
+.tox/
+.nox/
+build/
+dist/
+*.egg-info/
+
+# Coverage reports
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Rust build output (keep Cargo.lock versioned)
+/rust/target/
+
+# Local environment configuration (keep example templates)
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+
+# Editor temporary files and OS metadata
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
