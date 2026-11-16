@@ -8,8 +8,10 @@ Nov 13, 2026 · @Brian Carpenter
 > and MCP proxy are structural tools. A local reference host exercises actual
 > callbacks, confidentiality and provenance. Canonical wire/projection, encrypted
 > key restore/rotation and bounded process transport are implemented; deployment
-> provisioning and release review remain obligations. The approved sandbox
-> utility experiment is complete and passed its frozen criterion; see
+> provisioning now has project-owned local stdio and offline custody tooling.
+> Integration verification and release review remain obligations. The previous
+> candidate passed its frozen sandbox utility criterion; executable changes
+> require a fresh measurement before release. See
 > [spec/MILESTONE.md](spec/MILESTONE.md).
 
 ## Thesis

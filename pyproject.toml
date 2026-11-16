@@ -17,6 +17,8 @@ dependencies = [
 [project.scripts]
 tsd-scan = "cli.tsd_scanner:main"
 tsd-proxy = "proxy.mcp_proxy:main"
+tsd-host = "cli.host:main"
+tsd-authority = "cli.authority:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["lang", "gate", "proxy", "cli"]

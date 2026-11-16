@@ -2,7 +2,16 @@
 
 ## Supported integration profile
 
-Use the Python LocalHost library with trusted, fixed model/tool adapters. POSIX
+Use our `tsd-host` service and `tsd-authority` offline operator tool, described in
+[owned-host.md](owned-host.md), for the supported local POSIX deployment. This
+profile owns its transport, protected configuration and encrypted key custody;
+no external host or secret-manager product is required. The model receives only
+the private pipe endpoints, not authority files or operator configuration.
+See [the operator workflow](owned-host-operations.md) for provisioning, explicit
+signing, rotation and recovery, and [verification](OWNED-HOST-VERIFICATION.md)
+for the tested lifecycle and its limits.
+
+The Python LocalHost library also supports trusted, fixed model/tool adapters. POSIX
 process adapters provide bounded JSON I/O and deadlines; they are not an OS
 sandbox. The Rust library supplies equivalent core authority/security/wire logic,
 not a Rust LocalHost or provider daemon. The MCP proxy remains structural only.
@@ -15,15 +24,18 @@ uv build
 uv run --locked python scripts/check_artifacts.py
 ```
 
-The wheel installs `lang`, `gate`, `proxy`, and `cli` and exposes `tsd-scan` and
-`tsd-proxy`. These names are existing public modules, not a new privileged API.
+The wheel installs `lang`, `gate`, `proxy`, and `cli` and exposes `tsd-host`,
+`tsd-authority`, `tsd-scan` and `tsd-proxy`.
 Do not use the scanner or scaffold ALLOW result for real execution.
 
 ## Authority and host wiring
 
 1. Create an Authority in a separate trusted authority process. Persist only
    `export_encrypted(wrapping_key)` ciphertext; keep the cryptographically random
-   32-byte wrapping key in a separate secret manager. See authority-lifecycle.md.
+   32-byte wrapping key in separate protected custody. The owned authority CLI
+   implements this with separate operator-owned 0700 directories and checked
+   0600 files. It requires an OS identity isolated from model/tool processes.
+   See authority-lifecycle.md and owned-host.md.
 2. Provision explicit TrustKey entries with exact roles, scopes and ceilings.
    Register each tool with immutable definition bytes, actual principal, callback,
    recipient clearance and conservative output confidentiality.

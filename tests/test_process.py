@@ -15,6 +15,11 @@ from lang.limits import MAX_SOURCE_BYTES
 
 
 class TestProcessAdapter(unittest.TestCase):
+    def test_huge_timeout_refuses_without_numeric_conversion_crash(self):
+        with self.assertRaises(HostError) as caught:
+            ModelProcess((sys.executable,), 10**10000)
+        self.assertEqual(caught.exception.code, 'PROCESS.INVALID')
+
     def test_success_and_timeout_kill_same_group_descendants(self):
         for retain_pipes in (False, True):
             with self.subTest(retain_pipes=retain_pipes), tempfile.TemporaryDirectory() as directory:

@@ -34,6 +34,15 @@ backup/restore; `LocalHost.rotate_trust` retires old authority without clearing
 taint. `lang/wire.py` and `rust/src/wire.rs` implement canonical CBOR and lossless
 JSON AST projection. See [deployment instructions](spec/deployment.md).
 
+`tsd-host` is our own local enforcing service over private inherited stdio pipes.
+`tsd-authority` creates and loads encrypted signing keys and signs explicit
+operator-reviewed statements offline. The host receives only public keys and
+protected tool configuration. See [the owned-host contract](spec/owned-host.md)
+and [operator workflow](spec/owned-host-operations.md).
+These components use existing cryptographic libraries and require no external
+host or key-storage service. Separate OS identities must isolate authority
+custody from model and tool processes.
+
 The assistant has used the gate interactively for real temporary file operations.
 [Dogfood results](spec/DOGFOOD-2026-11-15.md) record the successful task, refused
 probes, and a source-string defect found and fixed during integration. Run
@@ -41,7 +50,7 @@ probes, and a source-string defect found and fixed during integration. Run
 its [contract](spec/dogfood.md) distinguishes this exercise from the required
 standard-benchmark utility experiment.
 
-The approved paired AgentDojo experiment is complete: baseline and gated runs
+The previous candidate's approved paired AgentDojo experiment is complete: baseline and gated runs
 each passed 93/97 tasks, with zero harmful paired regressions. The computed
 one-sided 95% upper bound is 3.04 percentage points, below the approved 5-point
 threshold. All 194 arms and the four tasks failed by both arms are retained in
@@ -49,8 +58,11 @@ threshold. All 194 arms and the four tasks failed by both arms are retained in
 low-integrity sandbox autonomy, not production endorsement costs or security
 against malicious agents.
 
-Still required before 1.0: production provider/transport integration, tested key
-custody provisioning and release review. The sandbox utility criterion is met.
+The owned-host implementation changes executable code, so those measurements
+remain historical evidence; the new candidate requires a fresh frozen run.
+Owned-host integration and full local verification pass; see
+[the verification report](spec/OWNED-HOST-VERIFICATION.md). Still required before
+1.0: the new candidate's utility measurement and release review.
 See [the milestone checklist](spec/MILESTONE.md). Core SecurityGate state remains
 process-local; restarting it with an old subject would discard replay protection.
 
@@ -183,8 +195,9 @@ not retain raw program excerpts. See [limits](spec/limits.md) and
 | `spec/` | Security contract, shared limits, grammar and milestone criteria |
 | `lang/`, `gate/` | Python parser, labels, structural gate, authority and security gate |
 | `gate/host.py` | Local enforcing host with registered callbacks and information-flow checks |
+| `gate/service.py`, `gate/custody.py` | Project-owned stdio service and offline authority custody |
 | `rust/` | Rust counterparts and integration tests |
-| `proxy/`, `cli/` | Structural MCP scaffold and scanner |
+| `proxy/`, `cli/` | Structural MCP scaffold/scanner and enforcing host/authority entry points |
 | `conformance/`, `tests/` | Shared vectors, differential oracle and regressions |
 | `benchmarks/`, `demos/` | Synthetic measurements and local negative fixtures |
 | `scripts/` | Limits generator and verification entry point |

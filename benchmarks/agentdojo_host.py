@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 from contextlib import redirect_stderr, redirect_stdout
 from dataclasses import dataclass
 from hashlib import sha256
@@ -16,7 +17,9 @@ import time
 from typing import Any, Protocol
 
 from gate.authority import Authority, TrustKey
-from gate.host import HostError, LabeledInput, LocalHost, ToolRegistration
+from gate.host import HostError, LocalHost, ToolRegistration
+from gate.local_protocol import ProtocolError, decode_object, encode_object
+from gate.service import HostSession
 from lang.limits import MAX_ARG_DEPTH, MAX_ARG_NODES, MAX_SOURCE_BYTES, MAX_SECURITY_RECORDS
 
 
@@ -202,14 +205,20 @@ class Worker:
         trust = TrustKey(authority.public_key, frozenset(('grant',)),
                          frozenset('bench.'+name for name in backend.tools), 'low')
         self.host = LocalHost({'bench': trust}, list(self.registrations.values()), model_clearance='public')
+        self.session = HostSession(self.host, list(self.registrations.values()), 'public')
         now = int(time.time())
         for name, registration in self.registrations.items():
-            self.host.apply(authority.sign(dict(
+            envelope = authority.sign(dict(
                 version=1, kind='grant', issuer='bench', subject=self.host.subject,
                 capability=self.capabilities[name], scope='bench.'+name,
                 tool_principal=registration.principal, tool_hash=registration.content_hash,
                 integrity='low', action_hash='', issued_at=now, expires_at=now+3600,
-                nonce=sha256(('nonce:'+name).encode()).hexdigest())))
+                nonce=sha256(('nonce:'+name).encode()).hexdigest()))
+            response = self.session.request({'op': 'apply',
+                'payload': base64.b64encode(envelope.payload).decode('ascii'),
+                'signature': base64.b64encode(envelope.signature).decode('ascii')})
+            if response != {'status': 'ALLOW'}:
+                raise AdapterError()
 
     def initial(self) -> dict[str, Any]:
         result = {'prompt': self.backend.prompt, 'tools': sorted(self.backend.tools)}
@@ -248,15 +257,28 @@ class Worker:
         # Apply the same transport size constraint to both arms.
         if len(source.encode()) > MAX_SOURCE_BYTES:
             raise AdapterError()
+        command = decode_object(encode_object({'op': 'execute', 'source': source,
+                                                'inputs': [encoded]}))
+        if self.session.closed:
+            raise AdapterError()
         if self.arm == 'gated':
-            result = self.host.run([LabeledInput(encoded)], lambda _: source)
-            if result is None:
+            result = self.session.request(command)
+            if result.get('status') != 'ALLOW':
+                if self.session.last_error_code == 'HOST.FAILED':
+                    raise HostError('HOST.FAILED')
                 raise AdapterError()
-            output = result.text
+            output = result.get('result')
+            if output is None:
+                raise AdapterError()
         else:
             output = registration.callback({'json': encoded})
         if type(output) is not str:
             raise AdapterError()
+        try:
+            encode_object({'status': 'ALLOW', 'result': output})
+        except ProtocolError:
+            self.session.closed = True
+            raise
         return {'result': output}
 
     def handle(self, raw: bytes) -> dict[str, Any]:
@@ -276,7 +298,7 @@ class Worker:
                 self.error = 'BENCH.FAILED'
             else:
                 status, result = 'DENY', {'error': 'BENCH.INVALID'}
-        except (AdapterError, ValueError, TypeError, UnicodeError, RecursionError):
+        except (AdapterError, ProtocolError, ValueError, TypeError, UnicodeError, RecursionError):
             status, result = 'DENY', {'error': 'BENCH.INVALID'}
         except Exception:
             status, result = 'ERROR', {'error': 'BENCH.FAILED'}

@@ -10,10 +10,12 @@ import sys
 import tempfile
 import unittest
 from unittest.mock import patch
+import base64
 
 from benchmarks.agentdojo_host import (AdapterError, AgentDojoBackend, TraceContext,
                                       Worker, canonical, main, write_trace)
 from lang.limits import MAX_ARG_DEPTH, MAX_ARG_NODES, MAX_SOURCE_BYTES
+from gate.service import HostSession
 
 
 class FakeBackend:
@@ -238,6 +240,60 @@ class TestAgentDojoWorker(unittest.TestCase):
             self.assertTrue((root/(lines[-1]['trace_sha256']+'.json')).is_file())
             self.assertEqual(backend.calls, [])
             self.assertEqual(backend.answers, [])
+
+
+    def test_controller_receives_grants_and_execute_without_endorsements(self):
+        observed = []
+        original = HostSession.request
+        def record(session, request):
+            observed.append(request)
+            return original(session, request)
+        with patch.object(HostSession, 'request', record):
+            backend = FakeBackend()
+            worker = Worker(backend, 'gated', 5)
+            self.assertIn('result', self.send(worker, op='call', tool='echo', args={'value': 2.5}))
+        self.assertEqual([item['op'] for item in observed], ['apply', 'execute'])
+        claims = json.loads(base64.b64decode(observed[0]['payload']))
+        self.assertEqual(claims['kind'], 'grant')
+        self.assertEqual(claims['integrity'], 'low')
+        self.assertEqual(set(observed[1]), {'op', 'source', 'inputs'})
+        self.assertEqual(backend.calls, [('echo', {'value': 2.5})])
+
+    def test_controller_framing_limit_is_equal_before_either_arm_effects(self):
+        # Raw argument and L source fit; the full owned execute frame does not.
+        for arm in ('baseline', 'gated'):
+            backend = FakeBackend()
+            worker = Worker(backend, arm, 5)
+            response = self.send(worker, op='call', tool='echo',
+                                 args={'value': 'x' * (MAX_SOURCE_BYTES // 2)})
+            self.assertEqual(response, {'error': 'BENCH.INVALID'})
+            self.assertEqual(backend.calls, [])
+            self.assertEqual(worker.events[-1]['status'], 'DENY')
+            self.assertIsNone(worker.error)
+
+    def test_controller_closed_state_prevents_future_dispatch_in_both_arms(self):
+        for arm in ('baseline', 'gated'):
+            backend = FakeBackend()
+            worker = Worker(backend, arm, 5)
+            worker.session.request({'op': 'close'})
+            self.assertEqual(self.send(worker, op='call', tool='echo', args={}),
+                             {'error': 'BENCH.INVALID'})
+            self.assertEqual(backend.calls, [])
+
+    def test_oversized_result_closes_both_arms_without_repeating_effect(self):
+        class LargeBackend(FakeBackend):
+            def call(self, name, arguments):
+                super().call(name, arguments)
+                return '"' * MAX_SOURCE_BYTES
+        for arm in ('baseline', 'gated'):
+            backend = LargeBackend()
+            worker = Worker(backend, arm, 5)
+            for _ in range(2):
+                self.assertEqual(self.send(worker, op='call', tool='echo', args={}),
+                                 {'error': 'BENCH.INVALID'})
+            self.assertTrue(worker.session.closed)
+            self.assertEqual(len(backend.calls), 1)
+            self.assertIsNone(worker.error)
 
 
 if __name__ == '__main__':

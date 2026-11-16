@@ -6,7 +6,6 @@ operator-installed programs must not execute model-proposed actions themselves.
 
 from dataclasses import dataclass
 import json
-import math
 import os
 import selectors
 import signal
@@ -52,7 +51,6 @@ class ProcessAdapter:
         if (os.name != 'posix' or type(self.argv) is not tuple or not self.argv
                 or len(self.argv) > MAX_ARG_NODES
                 or type(self.timeout) not in (int, float)
-                or not math.isfinite(self.timeout)
                 or not 0 < self.timeout <= MAX_PROCESS_SECONDS):
             raise HostError('PROCESS.INVALID')
         total = 0

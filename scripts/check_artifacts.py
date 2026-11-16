@@ -40,7 +40,9 @@ def main() -> int:
             with zipfile.ZipFile(wheels[0]) as wheel:
                 check_paths(wheel.namelist())
                 for required in ('gate/security.py', 'gate/host.py', 'gate/process.py',
-                                 'gate/keystore.py', 'lang/wire.py', 'cli/tsd_scanner.py'):
+                                 'gate/keystore.py', 'gate/custody.py', 'gate/service.py',
+                                 'gate/local_protocol.py', 'cli/host.py', 'cli/authority.py',
+                                 'lang/wire.py', 'cli/tsd_scanner.py'):
                     if required not in wheel.namelist():
                         raise ValueError('Incomplete wheel')
             with tarfile.open(sources[0]) as source:
@@ -68,6 +70,8 @@ def main() -> int:
             run([str(python), '-I', '-c', smoke], work)
             run([str(environment/'bin/tsd-scan'), '--help'], work)
             run([str(environment/'bin/tsd-proxy'), '--help'], work)
+            run([str(environment/'bin/tsd-host'), '--help'], work)
+            run([str(environment/'bin/tsd-authority'), '--help'], work)
         print('Distribution build, contents and isolated install verified')
         return 0
     except (OSError, ValueError, subprocess.SubprocessError, tarfile.TarError,

@@ -40,6 +40,15 @@ description and parameter schema to the registration hash. Only the upstream
 in-memory tool module allowlist is registered; no operating-system or network
 tool is exposed. The isolating launcher is still required defense in depth.
 
+The gated worker applies signed grants and executes through the owned
+`HostSession` controller. Both arms validate the same execute request and result
+against the owned JSON framing bounds; rich nested arguments, including finite
+floats, remain data inside the L string. The worker uses the controller's trusted,
+payload-free internal error code to distinguish infrastructure failures from
+ordinary denial. This diagnostic is never included in host protocol responses.
+This controller integration requires a fresh frozen revision and paired run;
+previously retained measurements describe only their recorded adapter revision.
+
 The approved policy grants low-integrity authority for every registered sandbox
 tool, scoped to bench.<tool_name>, a fresh host session and exact tool definition.
 No automatic endorsements are issued. Inputs and results remain low integrity.

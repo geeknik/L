@@ -20,6 +20,9 @@ not satisfy 1.0. MIT is selected; no release or formal proof is implied.
   same-group descendant cleanup and actual signed file-effect regression.
 - Encrypted authority export/restore and atomic trust rotation into fresh
   subjects while preserving input taint, confidentiality and provenance.
+- Project-owned private stdio service, strict protected tool configuration and
+  offline authority CLI with separate encrypted-blob/wrapping-key custody.
+  Runtime keys remain public-only; unsigned requests cannot change authority.
 - Wheel/sdist builds, explicit package contents and isolated installation checks.
 - Approved frozen utility protocol, strict paired-evidence checker and final
   release preflight that refuses missing license/revision/real measurements.
@@ -31,8 +34,9 @@ not satisfy 1.0. MIT is selected; no release or formal proof is implied.
 - Completed real-assistant paired AgentDojo evaluation: 93/97 successes in each
   arm, zero harmful paired regressions, one-sided 95% upper bound 3.04 percentage
   points (approved maximum 5). All 194 traces and eight ordinary failures are
-  retained in `release-evidence/utility-2026-11-15/`. This closes the approved
-  sandbox utility criterion, not production approval costs or deployment safety.
+  retained in `release-evidence/utility-2026-11-15/`. This closed the approved
+  sandbox utility criterion for that candidate. Owned-host executable changes
+  require a fresh frozen measurement; prior results cannot certify new code.
 
 ## Release obligations still open
 
@@ -40,12 +44,16 @@ not satisfy 1.0. MIT is selected; no release or formal proof is implied.
    in the exploratory dogfood profile. Broader deployment must ensure all relevant
    inputs and tool effects use the trusted host; the surrounding platform tools
    are not intercepted. A separate provider API is not needed for this dogfood
-   profile. The standard-benchmark adapter is implemented and isolated with
-   Bubblewrap; the full production deployment boundary review remains open.
+   profile. Our private stdio host and offline authority now supply the local
+   deployment; their end-to-end CLI verification and local boundary review pass
+   (see OWNED-HOST-VERIFICATION.md). Installation-specific OS identity isolation
+   remains the deployer's responsibility, not a property inferred from unit tests.
+   The standard-benchmark adapter is isolated with Bubblewrap.
 2. **Authority lifecycle:** secure key custody and rotation; authenticated subject
    provisioning; durable session/replay/revocation semantics and recovery tests.
    Encrypted backup/restore and trust rotation are implemented. The operator must
-   provision secure storage and a separate wrapping key. LocalHost deliberately
+   use the owned custody tooling under an isolated operator identity, with a
+   separate wrapping-key directory. LocalHost deliberately
    never resumes a retired subject; resumable sessions are outside this profile.
 3. **Deployment information flow:** verify trusted labels assigned by actual
    provider/tool adapters. The local host now checks confidentiality and propagates
