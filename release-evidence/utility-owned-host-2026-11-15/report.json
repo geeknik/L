@@ -1,0 +1,1 @@
+{"baseline_success": 0.9690721649484536, "gated_success": 0.9690721649484536, "max_loss": 0.05, "observed_loss": 0.0, "pass": true, "regression_upper_95": 0.030411804036931105, "tasks": 97}

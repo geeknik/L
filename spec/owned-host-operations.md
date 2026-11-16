@@ -79,6 +79,12 @@ are LF-terminated JSON objects; close the session with `{"op":"close"}`. Send
 for explicit operator review. Never take these bindings from an untrusted model
 summary. All supplied inputs, including empty input batches, retain the configured
 confidentiality and low integrity. There is no client label override.
+The host closes an idle connection after MAX_PROCESS_SECONDS (currently 30).
+While waiting for model work or human review, the launcher must send and consume
+harmless `info` exchanges before that deadline. Use one serialized writer; never
+interleave heartbeat bytes with another request. Heartbeats do not renew grants
+or approvals. A transport failure after execution leaves the outcome uncertain;
+inspect the effect before any new operator-authorized attempt.
 
 ## Sign reviewed evidence offline
 
@@ -132,5 +138,6 @@ kills its process group; it is not an OS sandbox, and detached descendants requi
 OS containment. The operator is responsible for the reviewed adapter's own input
 validation, filesystem permissions, and side effects. Forced termination or
 filesystem failure can leave temporary or incomplete local artifacts requiring
-operator cleanup. Existing frozen benchmark results describe their original code
-revision; this implementation requires new measurement before release claims.
+operator cleanup. The owned-host candidate's paired utility evidence is retained
+in `../release-evidence/utility-owned-host-2026-11-15/`. It describes that exact
+implementation; later executable changes require a fresh frozen measurement.

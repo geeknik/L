@@ -31,14 +31,22 @@ not satisfy 1.0. MIT is selected; no release or formal proof is implied.
   quoted-string representation in both parsers. See DOGFOOD-2026-11-15.md; this
   exploratory exercise is not a paired standard-benchmark utility measurement.
 - CI action commit pins, tested Rust toolchain pin and dependency advisory gates.
-- Completed real-assistant paired AgentDojo evaluation: 93/97 successes in each
+- Completed owned-host real-assistant paired AgentDojo evaluation: 94/97 successes in each
   arm, zero harmful paired regressions, one-sided 95% upper bound 3.04 percentage
-  points (approved maximum 5). All 194 traces and eight ordinary failures are
-  retained in `release-evidence/utility-2026-11-15/`. This closed the approved
-  sandbox utility criterion for that candidate. Owned-host executable changes
-  require a fresh frozen measurement; prior results cannot certify new code.
+  points (approved maximum 5). All 194 traces and six ordinary failures are
+  retained in `release-evidence/utility-owned-host-2026-11-15/`. This closes the
+  approved sandbox utility criterion for the recorded owned-host candidate.
+  The earlier run remains historical; later code changes require new measurement.
 
-## Release obligations still open
+## Release and deployment obligations
+
+The supported local host, offline custody and candidate-bound utility measurement
+are implemented and verified. An external hosting or key-storage service is not
+a missing implementation dependency. Before publication, run final clean release
+preflight, review the retained evidence/artifacts and select the publication
+destination with maintainer approval. No tag, push or publication is implied.
+
+The following are deployment responsibilities and explicit profile limits:
 
 1. **Actual deployment:** the current assistant now uses a real local tool adapter
    in the exploratory dogfood profile. Broader deployment must ensure all relevant
@@ -49,8 +57,8 @@ not satisfy 1.0. MIT is selected; no release or formal proof is implied.
    (see OWNED-HOST-VERIFICATION.md). Installation-specific OS identity isolation
    remains the deployer's responsibility, not a property inferred from unit tests.
    The standard-benchmark adapter is isolated with Bubblewrap.
-2. **Authority lifecycle:** secure key custody and rotation; authenticated subject
-   provisioning; durable session/replay/revocation semantics and recovery tests.
+2. **Authority lifecycle:** use the implemented custody/rotation and fresh-session
+   recovery semantics; obtain subject/tool bindings from the trusted launcher.
    Encrypted backup/restore and trust rotation are implemented. The operator must
    use the owned custody tooling under an isolated operator identity, with a
    separate wrapping-key directory. LocalHost deliberately
@@ -63,9 +71,10 @@ not satisfy 1.0. MIT is selected; no release or formal proof is implied.
    silently substitute projected AST text. Nonprivileged transcript expiry needs
    a host envelope if transcripts are persisted/replayed; the current host only
    processes freshly generated acts and does not expose replay ingestion.
-5. **Release assurance:** MIT selected; repeat dependency advisory
-   checks at release, independent security review, tracked source/release process.
-   No mechanized proof exists; do not advertise formal non-interference.
+5. **Release assurance:** MIT selected; repeat dependency advisory checks at
+   release and retain a tracked source/release process. Internal security review
+   is recorded; no external certification or mechanized proof exists. Do not
+   advertise formal non-interference.
 
 Every closure needs a test or retained experiment result, not a prose assertion.
 The local authority protocol is owned here; its primitives are supplied by vetted

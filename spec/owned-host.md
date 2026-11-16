@@ -32,6 +32,10 @@ partial EOF, overlong frames and stalled peers terminate the session with a
 fixed sanitized error where possible. No recovery skips arbitrary input bytes.
 Schema/authorization errors on a complete frame return a fixed error and may
 continue. Responses obey the same size bound. No raw requests are logged.
+The read deadline includes idle time between requests. A trusted launcher waiting
+for model work or offline human review may send complete `info` requests before
+that deadline; these neither extend grant expiry nor change authorization.
+Serialize requests through one writer and consume every response.
 
 ## Host configuration and protocol
 

@@ -50,19 +50,20 @@ probes, and a source-string defect found and fixed during integration. Run
 its [contract](spec/dogfood.md) distinguishes this exercise from the required
 standard-benchmark utility experiment.
 
-The previous candidate's approved paired AgentDojo experiment is complete: baseline and gated runs
-each passed 93/97 tasks, with zero harmful paired regressions. The computed
+The owned-host candidate's approved paired AgentDojo experiment is complete:
+baseline and gated runs each passed 94/97 tasks, with zero harmful paired
+regressions. The computed
 one-sided 95% upper bound is 3.04 percentage points, below the approved 5-point
-threshold. All 194 arms and the four tasks failed by both arms are retained in
-[the evidence](release-evidence/utility-2026-11-15/README.md). This measures
+threshold. All 194 arms and the three tasks failed by both arms are retained in
+[the evidence](release-evidence/utility-owned-host-2026-11-15/README.md). This measures
 low-integrity sandbox autonomy, not production endorsement costs or security
 against malicious agents.
 
-The owned-host implementation changes executable code, so those measurements
-remain historical evidence; the new candidate requires a fresh frozen run.
+The [earlier candidate's measurements](release-evidence/utility-2026-11-15/README.md)
+remain separate historical evidence; they are not pooled with this run.
 Owned-host integration and full local verification pass; see
-[the verification report](spec/OWNED-HOST-VERIFICATION.md). Still required before
-1.0: the new candidate's utility measurement and release review.
+[the verification report](spec/OWNED-HOST-VERIFICATION.md). Publication still
+requires final release preflight, a destination and maintainer approval.
 See [the milestone checklist](spec/MILESTONE.md). Core SecurityGate state remains
 process-local; restarting it with an old subject would discard replay protection.
 

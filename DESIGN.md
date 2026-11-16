@@ -9,9 +9,10 @@ Nov 13, 2026 · @Brian Carpenter
 > callbacks, confidentiality and provenance. Canonical wire/projection, encrypted
 > key restore/rotation and bounded process transport are implemented; deployment
 > provisioning now has project-owned local stdio and offline custody tooling.
-> Integration verification and release review remain obligations. The previous
-> candidate passed its frozen sandbox utility criterion; executable changes
-> require a fresh measurement before release. See
+> Integration verification passes. The owned-host candidate completed all 97
+> paired sandbox tasks: 94 successes in each arm, zero harmful regressions,
+> passing the frozen utility criterion. Release review/publication remain;
+> later executable changes require new measurements. See
 > [spec/MILESTONE.md](spec/MILESTONE.md).
 
 ## Thesis

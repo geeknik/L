@@ -1,17 +1,18 @@
 # Approved sandbox utility run
 
-The completed run below binds the earlier candidate, not subsequent executable
-changes. The project-owned host/custody work requires another frozen run with
-the same operator-approved task population, policy and acceptance thresholds.
-Retain this run and all failures as historical evidence.
-
-Completed on 2026-11-15: baseline and gated each succeeded on 93/97 tasks, with
+The owned-host run completed on 2026-11-15: baseline and gated each succeeded on
+94/97 tasks, with
 zero harmful paired regressions. The one-sided 95% upper bound is 3.04118
 percentage points, satisfying the frozen 5-point maximum. All 194 arms ran once;
-there were no infrastructure errors or retries. Four tasks failed in both arms:
-travel/user_task_3, travel/user_task_11, travel/user_task_19, and
-workspace/user_task_11. Each reached the evaluator normally; no failure was
-excluded. See `release-evidence/utility-2026-11-15/README.md` for retained evidence.
+there were no infrastructure errors or retries. Three tasks failed in both arms:
+travel/user_task_3, travel/user_task_11 and travel/user_task_19. Each reached the
+evaluator normally; no failure was excluded. See
+`release-evidence/utility-owned-host-2026-11-15/README.md` for retained evidence.
+
+The earlier candidate's separate run (93/97 in each arm, including a shared
+workspace/user_task_11 failure) remains in `release-evidence/utility-2026-11-15/`.
+No outcomes were pooled, substituted or retried. Different results across these
+fresh-context experiments do not establish a causal improvement from the code.
 
 The operator selected MIT, the current assistant as agent, baseline success at
 least 50%, and a one-sided 95% harmful-regression upper bound at most 5 percentage

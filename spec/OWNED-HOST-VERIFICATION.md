@@ -44,7 +44,12 @@ it is not an OS sandbox. Root, the signing account and trusted adapter compromis
 are outside this local isolation claim. No real deployment identities were
 created and no long-lived production keys were provisioned by the demonstration.
 
-The benchmark now exercises HostSession in its gated arm and applies equal
-framing bounds to both arms. Existing utility measurements bind their original
-revision only. Freeze this candidate and rerun the approved paired experiment
-before claiming 1.0 readiness. No release, tag, push or publication is implied.
+The benchmark exercises HostSession in its gated arm and applies equal framing
+bounds to both arms. The fresh candidate-bound run completed all 97 pairs once:
+94/97 successes in each arm, zero harmful regressions and a one-sided 95% upper
+bound of 3.04118 percentage points (approved maximum 5). The six normal failed
+arms are retained; no infrastructure errors or retries occurred. See
+`../release-evidence/utility-owned-host-2026-11-15/README.md`. This measures the
+approved sandbox policy, not production endorsement costs or attack resistance.
+Later executable changes require fresh evidence. No release, tag, push or
+publication is implied.
