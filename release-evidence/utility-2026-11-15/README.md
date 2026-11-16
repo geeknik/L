@@ -1,6 +1,7 @@
 # Paired sandbox utility evidence
 
-Status: all 194 arms completed once; the approved sandbox utility criterion passed.
+Status: all 194 arms completed once; the approved sandbox utility criterion passed
+for the recorded implementation. This historical run does not cover later code.
 This is not a production deployment or publication approval.
 
 | Measure | Result |
@@ -30,7 +31,7 @@ The approved protocol was committed before the first model task:
 The current assistant executes each arm in a fresh child context, without inherited
 conversation or opposite-arm outcomes. The coordinator receives outcome metadata
 only. There are no model retries. The frozen instructions, environment lock and
-limits are recorded in `benchmarks/utility_protocol.json` and `spec/utility-run.md`.
+limits are retained in `protocol.json` here and in the recorded Git freeze.
 
 `progress.json` is execution accounting, not the release verdict. Per-arm workers
 wrote content-addressed trace files into temporary `runs/` directories. After
@@ -57,7 +58,7 @@ approval costs, secret-manager deployment, or formal non-interference.
 Validate the retained results from the repository root:
 
 ```sh
-uv run --locked python benchmarks/utility_report.py benchmarks/utility_protocol.json release-evidence/utility-2026-11-15/results.json --trace-root release-evidence/utility-2026-11-15/traces
+uv run --locked python benchmarks/utility_report.py release-evidence/utility-2026-11-15/protocol.json release-evidence/utility-2026-11-15/results.json --trace-root release-evidence/utility-2026-11-15/traces
 ```
 
 Incomplete evidence or infrastructure errors refuse. The frozen utility criterion
