@@ -50,6 +50,11 @@ Git histories and producer-generated traces can be fabricated. The operator must
 retain independent approval/predeclaration evidence and review experiment
 provenance; neither commit ancestry nor hashes authenticate a measurement.
 
+Protocol and result metadata must also be regular non-symlink files, bounded by
+MAX_WIRE_BYTES. Open them without blocking on FIFOs and validate the opened
+descriptor before reading. Invalid numeric thresholds produce validation errors,
+including integers too large to convert to floating point.
+
 Both report CLI and release preflight require explicit `--trace-root`. Each arm's
 trace is a regular non-symlink file named `<trace_sha256>.json` directly within
 that directory. Read at most MAX_WIRE_BYTES per file, recompute SHA-256 over exact

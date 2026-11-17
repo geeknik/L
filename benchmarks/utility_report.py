@@ -27,7 +27,11 @@ def _pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
 
 
 def read(path: Path) -> tuple[bytes, Any]:
-    with path.open('rb') as stream:
+    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    with os.fdopen(descriptor, 'rb') as stream:
+        info = os.fstat(stream.fileno())
+        if not stat.S_ISREG(info.st_mode) or info.st_size > MAX_WIRE_BYTES:
+            raise EvidenceError('Invalid evidence file')
         raw = stream.read(MAX_WIRE_BYTES + 1)
     if len(raw) > MAX_WIRE_BYTES:
         raise EvidenceError('Evidence exceeds limit')
@@ -91,7 +95,7 @@ def evaluate(protocol_raw: bytes, protocol: Any, results: Any) -> dict[str, Any]
         raise EvidenceError('Invalid step budget')
     for name in ('max_loss','min_baseline_success'):
         value = protocol[name]
-        if type(value) not in (int,float) or not math.isfinite(value) or not 0 < value < 1:
+        if type(value) not in (int,float) or not 0 < value < 1 or not math.isfinite(value):
             raise EvidenceError('Invalid frozen threshold')
     tasks = protocol['tasks']
     if type(tasks) is not list or not 1 <= len(tasks) <= MAX_SECURITY_RECORDS:

@@ -129,6 +129,7 @@ class SecurityGate:
                     if len(self._revoked) >= MAX_SECURITY_RECORDS:
                         raise SecurityError('AUTH.CAPACITY')
                     self._revoked.add(claims.capability)
+                    del self._grants[claims.capability]
                     self._approvals = {k: v for k, v in self._approvals.items()
                                        if k[0] != claims.capability}
             self._nonces.add(nonce)

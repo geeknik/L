@@ -2,10 +2,13 @@
 from copy import deepcopy
 from hashlib import sha256
 import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 import tempfile
 import unittest
-from benchmarks.utility_report import EvidenceError, evaluate, regression_upper, verify_traces
+from benchmarks.utility_report import EvidenceError, evaluate, regression_upper, verify_traces, read
 from lang.limits import MAX_WIRE_BYTES
 
 
@@ -111,3 +114,43 @@ class TestUtilityEvidence(unittest.TestCase):
         raw,protocol,result=self.fixture()
         for run in result['runs'][:10]: run['gated_success']=False
         self.assertFalse(evaluate(raw,protocol,result)['pass'])
+
+
+    def test_thresholds_reject_oversized_integers_without_crashing(self):
+        # I6/I7: bounded JSON must produce a validation error, not OverflowError.
+        for field in ('max_loss', 'min_baseline_success'):
+            raw, protocol, results = self.fixture()
+            protocol[field] = 10**400
+            raw = json.dumps(protocol).encode()
+            with self.subTest(field=field), self.assertRaises(EvidenceError):
+                evaluate(raw, protocol, results)
+
+    def test_metadata_files_are_bounded_regular_files(self):
+        # I6/I7: metadata has the same file-type boundary as retained traces.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            regular = root/'regular.json'
+            regular.write_bytes(b'{"ok":true}')
+            self.assertEqual(read(regular), (b'{"ok":true}', {'ok': True}))
+            link = root/'link.json'
+            link.symlink_to(regular)
+            for path in (link, root):
+                with self.subTest(path=path), self.assertRaises((EvidenceError, OSError)):
+                    read(path)
+            regular.write_bytes(b' ' * (MAX_WIRE_BYTES+1))
+            with self.assertRaises(EvidenceError):
+                read(regular)
+
+    def test_fifo_metadata_refuses_without_waiting_for_writer(self):
+        # I6: a byte limit alone cannot bound a blocking FIFO open/read.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fifo = root/'payload-marker.fifo'
+            os.mkfifo(fifo)
+            result = subprocess.run(
+                [sys.executable, '-m', 'benchmarks.utility_report', str(fifo),
+                 str(root/'unused.json'), '--trace-root', str(root)],
+                capture_output=True, text=True, timeout=5)
+            self.assertEqual(result.returncode, 2)
+            self.assertEqual(result.stdout, '')
+            self.assertEqual(result.stderr, 'Utility evidence is incomplete or invalid\n')

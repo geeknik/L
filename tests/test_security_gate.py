@@ -77,6 +77,20 @@ class TestSecurityGate(unittest.TestCase):
         self.assertFalse(self.gate._grants)
         self.grant()  # Failed signatures did not consume the nonce.
 
+    def test_revocation_discards_claims_but_retains_replay_protection(self):
+        # I7: removing revoked authority must not permit its identifier to return.
+        self.grant()
+        self.endorse()
+        capability = self.base['capability']
+        revocation = self.signed(kind='revoke', nonce='3' * 64)
+        self.gate.apply(revocation, 110)
+        self.assertNotIn(capability, self.gate._grants)
+        self.assertIn(capability, self.gate._revoked)
+        self.assertFalse(self.gate._approvals)
+        self.deny('AUTH.REPLAY', self.gate.apply, revocation, 110)
+        self.deny('AUTH.REVOKED', self.gate.apply, self.signed(nonce='4' * 64), 110)
+        self.deny('AUTH.REVOKED', self.gate.execute, self.source, 110)
+
     def test_exact_issuer_subject_roles_scopes_and_ceiling(self):
         for changed in (dict(issuer='issuer_extra'), dict(scope='fs.read.extra')):
             self.deny('AUTH.INVALID', self.gate.apply, self.signed(**changed), 110)
