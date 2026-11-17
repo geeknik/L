@@ -56,17 +56,21 @@ paired run in `release-evidence/utility-final-2026-11-16/` stopped after an
 agent-reported launch-path transcription error: 51 traced arms completed, one
 launch failed, and 142 arms were not started. It is incomplete and ineligible;
 see the [incident](../release-evidence/utility-final-2026-11-16/INCIDENT.md).
-A fresh full run requires an explicit restart decision under the frozen no-retry
-policy. The older 94/97 result does not certify this candidate. The default final release preflight
-must pass before publication. See [deployment.md](deployment.md).
+The older 94/97 result does not certify this candidate. The default final release
+preflight must pass before publication. See [deployment.md](deployment.md).
 
 The [manifest launcher](benchmark-launch.md) now replaces agent-reconstructed
 launch arguments with digest-bound wrappers, atomic attempt claims and lifecycle
 records. Its 22 focused tests pass on the default interpreter and Python 3.12;
 the full suite passes 406 Python tests and 95 Rust tests. This verifies the
-orchestration fix, not a fresh utility result. No new benchmark tasks ran during
-that validation; the failed run and frozen protocol remain intact. The revised
-launcher/prompt must be committed and newly frozen before another full run.
+orchestration fix, not a fresh utility result. The operator then approved a new
+full experiment, frozen at `fc8a2aec1a8cddd0683c5a96940b65b94fbf90d3` for candidate
+`292a54009c2bac4863d8ca186146d1a369f447f8`. That run stopped on a platform execution
+error after 21 completed arms, with one failed launch and 172 unstarted arms.
+The correct generated wrapper was invoked; no claim or trace exists for the
+failed arm. See the [new incident](../release-evidence/utility-manifest-2026-11-17/INCIDENT.md).
+No retries or pooled results are permitted. Platform stability remains unresolved
+and complete candidate-bound utility evidence is still missing; 1.0 stays blocked.
 
 The following are deployment responsibilities and explicit profile limits:
 

@@ -1,5 +1,15 @@
 # Approved sandbox utility run
 
+The operator-approved manifest-launcher run on 2026-11-17 stopped on a platform
+execution error: the solver invoked the correct wrapper, but its execution tool
+returned `gRPC code-mode session closed`. The affected arm has no attempt claim
+or trace. The already-running mate completed, leaving 21 completed arms, one
+failed launch and 172 unstarted arms. Evidence is retained separately in
+`release-evidence/utility-manifest-2026-11-17/`; see its
+[incident](../release-evidence/utility-manifest-2026-11-17/INCIDENT.md).
+No retries or passing utility result were recorded. The deeper platform cause
+is unresolved; this observation does not establish a defect in the security gate.
+
 The final-version attempt on 2026-11-16 stopped on an infrastructure launch error.
 Its 51 completed traces, one failed launch and 142 unstarted arms are retained in
 `release-evidence/utility-final-2026-11-16/`. No retries or passing utility result
