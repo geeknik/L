@@ -4,7 +4,10 @@ The checked-in `benchmarks/utility_protocol.json` now binds the final-version
 candidate `6336916d5a3e02fae00081e71936787db747ec53`. The approved tasks, policy,
 prompt, dependency lock and thresholds are unchanged. Fresh final-candidate
 measurements are retained separately in `release-evidence/utility-final-2026-11-16/`;
-no passing result is claimed before the complete run and trace validation.
+the run stopped on a launch-path transcription error, with 51 completed traces,
+one failed launch and 142 unstarted arms. It cannot satisfy the release gate.
+See the [incident](../release-evidence/utility-final-2026-11-16/INCIDENT.md).
+No arm was retried and no passing report was produced.
 
 The preceding owned-host run used protocol commit
 `541cb181412b222d228adaa0d4f46a2c4db7206e` and adapter

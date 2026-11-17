@@ -1,5 +1,10 @@
 # Approved sandbox utility run
 
+The final-version attempt on 2026-11-16 stopped on an infrastructure launch error.
+Its 51 completed traces, one failed launch and 142 unstarted arms are retained in
+`release-evidence/utility-final-2026-11-16/`. No retries or passing utility result
+were recorded; see the [incident](../release-evidence/utility-final-2026-11-16/INCIDENT.md).
+
 The owned-host run completed on 2026-11-15: baseline and gated each succeeded on
 94/97 tasks, with
 zero harmful paired regressions. The one-sided 95% upper bound is 3.04118

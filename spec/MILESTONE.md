@@ -52,9 +52,12 @@ destination with maintainer approval. No tag, push or publication is implied.
 Both package manifests and locks now use `1.0.0`. Candidate source
 `6336916d5a3e02fae00081e71936787db747ec53` passed software/artifact checks and
 runtime, Rust and benchmark dependency audits before protocol freeze. The fresh
-paired run belongs in `release-evidence/utility-final-2026-11-16/`. Completion and
-passing outcomes must be established from retained results and traces; the older
-94/97 result does not certify this candidate. The default final release preflight
+paired run in `release-evidence/utility-final-2026-11-16/` stopped after an
+agent-reported launch-path transcription error: 51 traced arms completed, one
+launch failed, and 142 arms were not started. It is incomplete and ineligible;
+see the [incident](../release-evidence/utility-final-2026-11-16/INCIDENT.md).
+A fresh full run requires an explicit restart decision under the frozen no-retry
+policy. The older 94/97 result does not certify this candidate. The default final release preflight
 must pass before publication. See [deployment.md](deployment.md).
 
 The following are deployment responsibilities and explicit profile limits:
