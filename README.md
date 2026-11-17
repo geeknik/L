@@ -244,8 +244,14 @@ limits, in `CALCULUS.md`.
 
 1.0 means the DESIGN.md security gate, not a relabeled structural scanner.
 The remaining acceptance criteria are tracked in [spec/MILESTONE.md](spec/MILESTONE.md).
-`uv run --locked python scripts/release_check.py --results PATH --trace-root DIR` checks final
-version/license/source/evidence prerequisites before running all software checks.
-It currently refuses release until the approved real-agent experiment is complete.
-The project is MIT licensed (see LICENSE); package version 1.0.0 is a release
-candidate until preflight passes. No tag, publication or formal guarantee is implied.
+The RC versions are Python `1.0.0rc1` and Rust `1.0.0-rc.1`.
+`uv run --locked python scripts/release_check.py --channel rc --results PATH --trace-root DIR`
+checks RC version/license/source/evidence prerequisites before running all software
+checks. Omit `--channel rc` only for final `1.0.0` packages.
+The approved owned-host experiment is complete for its recorded implementation.
+Its retained evidence does not certify the later RC packaging changes: preflight
+preserves exact measured-source binding, so the RC needs a fresh source-bound
+measurement before publication. The project is [MIT licensed](LICENSE).
+Passing preflight does not publish a release:
+artifact review, a publication destination and maintainer approval remain required.
+No tag, publication or formal guarantee is implied.

@@ -1,9 +1,13 @@
 # Authority custody and session retirement
 
 This contract supplements `security-gate.md` and `local-host.md`. It does not
-change signed claims or the L wire format. The Python local authority can export
-and restore an encrypted in-memory key blob; no filesystem or password interface
-is provided. Ed25519 signing continues to use PyNaCl.
+change signed claims or the L wire format. The low-level Python `Authority` API
+can export and restore an encrypted in-memory key blob; that API provides no
+filesystem or password interface. The separate `gate/custody.py` layer and
+`tsd-authority` offline CLI implement the project's filesystem custody profile;
+see [owned-host.md](owned-host.md) and the
+[operator workflow](owned-host-operations.md). Ed25519 signing continues to use
+PyNaCl.
 
 `Authority.export_encrypted(wrapping_key)` and
 `Authority.load_encrypted(blob, wrapping_key)` use PyNaCl SecretBox authenticated
@@ -16,11 +20,15 @@ and ciphertext encoding. The marker inside the authenticated plaintext prevents
 version confusion. Only the exact resulting length is accepted; wrong versions,
 truncation, trailing bytes, tampering and wrong keys raise a fixed KeyStoreError.
 No plaintext seed export API is provided. Key objects omit secrets from repr;
-no keys, plaintext or ciphertext are logged or written by these modules.
+these in-memory APIs do not log or write key material. The separate custody layer
+writes the encrypted blob and wrapping key only to their protected files.
 
 The operator must store ciphertext atomically in access-controlled storage and
-keep the wrapping key separately in a secret manager, with least privilege,
-backup, recovery and rotation policy. The encrypted blob is sensitive. Possession
+keep the wrapping key separately, with least privilege, backup, recovery and
+rotation policy. The owned-host custody profile uses separate private directories
+under an isolated operator identity; it does not require an external secret
+manager. This OS-protected storage is not an HSM and does not defend against
+compromise of the operator UID. The encrypted blob is sensitive. Possession
 of both blob and wrapping key confers signing authority. Python cannot guarantee
 memory zeroization, protection from a compromised process, or suppression of
 debugger/core-dump copies. This API does not provide those guarantees. Restoring

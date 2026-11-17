@@ -137,3 +137,31 @@ class TestReleaseCheck(unittest.TestCase):
                                subprocess.CompletedProcess(['git'],0,b'',b'')):
                         failures=blockers(root,None)
                     self.assertIn('Repository license selection and LICENSE file are missing',failures)
+
+
+    def test_release_channel_requires_exact_version_pair(self):
+        # I7: an RC must never silently pass the final-release metadata check.
+        cases = [
+            ('final', '1.0.0', '1.0.0', True),
+            ('rc', '1.0.0rc1', '1.0.0-rc.1', True),
+            ('final', '1.0.0rc1', '1.0.0-rc.1', False),
+            ('rc', '1.0.0', '1.0.0', False),
+            ('rc', '1.0.0rc1', '1.0.0-rc.2', False),
+            ('rc', '1.0.0rc1', '1.0.0', False),
+            ('bogus', '1.0.0', '1.0.0', False),
+        ]
+        for channel, python_version, rust_version, valid in cases:
+            with self.subTest(channel=channel, python=python_version, rust=rust_version):
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    (root/'rust').mkdir()
+                    (root/'pyproject.toml').write_text(
+                        f'[project]\nversion="{python_version}"\nlicense="MIT"\n')
+                    (root/'rust/Cargo.toml').write_text(
+                        f'[package]\nversion="{rust_version}"\nlicense="MIT"\n')
+                    (root/'LICENSE').write_text('TEST FIXTURE ONLY')
+                    failures = blockers(root, None, channel=channel)
+                    version_errors = [message for message in failures
+                                      if 'channel' in message]
+                    self.assertEqual(not version_errors, valid)
+                    self.assertTrue(failures)  # No evidence: never release-ready.

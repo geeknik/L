@@ -374,7 +374,7 @@ wheels = [
 
 [[package]]
 name = "tsd-security-gate"
-version = "1.0.0"
+version = "1.0.0rc1"
 source = { editable = "." }
 dependencies = [
     { name = "pynacl" },

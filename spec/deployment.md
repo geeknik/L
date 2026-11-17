@@ -63,7 +63,10 @@ containment. No automatic retry follows partial tool effects.
 
 ## Final release gates
 
-MIT is selected and both package manifests carry candidate version 1.0.0.
+MIT is selected. The first explicit RC uses Python `1.0.0rc1` and Rust
+`1.0.0-rc.1`; the final release uses `1.0.0` in both manifests.
+Use `--channel rc` for the RC preflight; the default `final` channel accepts
+only final versions. Mixed channels or RC numbers are rejected.
 The operator approved the sandbox policy and utility criteria in utility-run.md.
 Commit the complete protocol before starting paired baseline/gated tasks, and
 independently inspect retained traces. No fabricated results may substitute for
@@ -75,8 +78,11 @@ verify all software/artifact/advisory checks, and commit the reviewed source.
 Record that commit as adapter_revision. The preflight requires it to exist and
 requires runtime, adapter, benchmark code and dependency manifests to remain
 unchanged since measurement. Later documentation/protocol commits are permitted;
-changed executable code requires new measurements. Merely setting a candidate
-version does not authorize publication.
+changes to executable code or measured manifests/scripts require new measurements.
+The retained owned-host run certifies its recorded 1.0.0 candidate, not the later
+RC metadata/tooling revision. Do not rewrite its protocol or traces to relabel it.
+Freeze and measure the RC source before claiming RC release preflight success.
+Merely setting a candidate version does not authorize publication.
 Run `python scripts/release_check.py --results <measured-results.json> --trace-root <directory>` under the
 project environment. A zero exit is a technical preflight, not permission to
 publish. Confirm distribution contents, license, source revision and destination

@@ -46,6 +46,13 @@ a missing implementation dependency. Before publication, run final clean release
 preflight, review the retained evidence/artifacts and select the publication
 destination with maintainer approval. No tag, push or publication is implied.
 
+The explicit RC uses Python `1.0.0rc1` and Rust `1.0.0-rc.1`. Its version and
+release-tool changes are outside the previously measured source revision. The
+retained 94/97 result remains evidence for that recorded candidate; it is not
+a fresh RC measurement. Freeze the RC source and retain a new paired run before
+`--channel rc` release preflight can pass. The exact-source evidence check remains
+unchanged. See [deployment.md](deployment.md).
+
 The following are deployment responsibilities and explicit profile limits:
 
 1. **Actual deployment:** the current assistant now uses a real local tool adapter

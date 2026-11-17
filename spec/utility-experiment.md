@@ -1,12 +1,17 @@
 # Real-agent utility release evidence
 
 The checked-in `benchmarks/utility_protocol.json` is approved and frozen at commit
-`4e8405926a5448114500f3777cb21a6b31c0ce89`. It is a protocol, not a measurement.
+`541cb181412b222d228adaa0d4f46a2c4db7206e`, binding adapter revision
+`4edf0e14162cef0ec9d8637780fcd9fcbca87452`. It is a protocol, not a measurement.
 The paired run uses all 97 registered AgentDojo v1.2.2 tasks and the isolated
 policy described in utility-run.md. All 194 arms completed and passed the frozen
 utility criterion; retained results and traces are in
-`release-evidence/utility-2026-11-15/`. Broader release obligations remain in
-MILESTONE.md. Upstream source:
+`release-evidence/utility-owned-host-2026-11-15/`: 94/97 successes in each arm,
+zero harmful paired regressions, and a one-sided 95% upper bound of 3.04 percentage
+points against the approved 5-point maximum. The earlier
+`release-evidence/utility-2026-11-15/` run is separate historical evidence and is
+not pooled with this run. Broader release obligations remain in
+[MILESTONE.md](MILESTONE.md). Upstream source:
 https://github.com/ethz-spylab/agentdojo/tree/089ed468cf3ed0322acc66b0211f26d9d90dbf60
 
 Before any release experiment, the operator must select/approve the benchmark

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tsd-security-gate"
-version = "1.0.0"
+version = "1.0.0rc1"
 description = "Pre-release trust-typed language and security gate"
 readme = "README.md"
 license = "MIT"

@@ -1,4 +1,4 @@
-"""Final 1.0 preflight. Missing decisions or real evidence are release blockers."""
+"""1.0 RC/final preflight. Missing decisions or real evidence are release blockers."""
 import argparse
 from pathlib import Path
 import re
@@ -54,13 +54,17 @@ def frozen_protocol_matches(root: Path, raw: bytes, freeze: object, adapter: obj
     return blob.returncode == 0 and blob.stdout == raw
 
 
-def blockers(root: Path, results: Path | None, trace_root: Path | None = None) -> list[str]:
+def blockers(root: Path, results: Path | None, trace_root: Path | None = None,
+             channel: str = 'final') -> list[str]:
     failures: list[str] = []
     try:
         python = tomllib.loads((root/'pyproject.toml').read_text())['project']
         rust = tomllib.loads((root/'rust/Cargo.toml').read_text())['package']
-        if python['version'] != '1.0.0' or rust['version'] != '1.0.0':
-            failures.append('Final version must be 1.0.0 in both package manifests')
+        expected = {'final': ('1.0.0', '1.0.0'), 'rc': ('1.0.0rc1', '1.0.0-rc.1')}
+        if channel not in expected:
+            failures.append('Unknown release channel')
+        elif (python['version'], rust['version']) != expected[channel]:
+            failures.append('Package versions do not match the selected release channel')
         license_id = python.get('license')
         if (license_id not in ('MIT', 'Apache-2.0', 'LicenseRef-Proprietary')
                 or rust.get('license') != license_id or not (root/'LICENSE').is_file()
@@ -106,8 +110,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--results',type=Path,help='Real paired utility evidence JSON')
     parser.add_argument('--trace-root',type=Path,help='Directory containing retained trace artifacts')
+    parser.add_argument('--channel', choices=('final', 'rc'), default='final',
+                        help='Require final 1.0.0 versions (default), or the first RC versions')
     args = parser.parse_args()
-    failures = blockers(ROOT,args.results,args.trace_root)
+    failures = blockers(ROOT,args.results,args.trace_root,args.channel)
     if failures:
         print('RELEASE BLOCKED')
         for failure in failures:

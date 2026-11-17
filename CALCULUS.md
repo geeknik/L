@@ -147,17 +147,30 @@ It depends on trusted host identity, clock, key provisioning, input observation,
 and execution of only the returned validated act. It does not imply that a
 signed tool is safe or that omitted host observations can be detected.
 
-## Remaining 1.0 obligations
+## 1.0 release status and deployment limits
 
-The MCP proxy is a structural scaffold. The local Python reference host enforces
-the security API on registered callbacks, with confidentiality recipient checks,
-provenance accumulation and trusted input observation. It is not a production
-model/MCP adapter. Fresh random session subjects prevent reuse of old evidence
-after reconstruction; underlying gate state is still process-local. Key custody,
-rotation and resumable sessions require deployment integration. Canonical binary
-wire encoding and lossless projection are implemented under `spec/wire.md`;
-decoding does not authorize anything or change exact-source approvals. Real agent utility
-has not been measured and no threshold has been approved. Licensing and formal
-proof claims remain unresolved.
+The MCP proxy remains a structural scaffold. Our separate `tsd-host` service
+enforces the security API over private stdio, with confidentiality recipient
+checks, provenance accumulation and trusted input observation. `tsd-authority`
+provides offline signing and encrypted filesystem custody; the supported profile
+requires separate operator and host/tool OS identities. See the
+[owned-host contract](spec/owned-host.md) and
+[operator workflow](spec/owned-host-operations.md).
+
+Fresh random session subjects prevent reuse of old evidence after reconstruction;
+underlying gate state remains process-local and resumable sessions are outside
+this profile. Canonical binary wire encoding and lossless projection are
+implemented under `spec/wire.md`; decoding does not authorize anything or change
+exact-source approvals.
+
+MIT licensing is selected. The owned-host candidate completed the approved paired
+utility experiment: 94/97 successes in each arm, zero harmful paired regressions,
+and a one-sided 95% upper bound of 3.04 percentage points against the approved
+5-point maximum. [Retained evidence](release-evidence/utility-owned-host-2026-11-15/README.md)
+documents the measured revision and limitations; subsequent RC packaging changes
+require fresh source-bound evidence under the release contract. This measures sandbox utility,
+not general deployment safety or production approval costs. No mechanized proof
+or formal non-interference guarantee is claimed. Publication requires clean
+candidate preflight, evidence/artifact review and maintainer approval.
 
 See [spec/MILESTONE.md](spec/MILESTONE.md) for release acceptance criteria.
