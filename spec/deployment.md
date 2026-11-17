@@ -63,8 +63,8 @@ containment. No automatic retry follows partial tool effects.
 
 ## Final release gates
 
-MIT is selected. The first explicit RC uses Python `1.0.0rc1` and Rust
-`1.0.0-rc.1`; the final release uses `1.0.0` in both manifests.
+MIT is selected. The current final candidate uses `1.0.0` in both manifests.
+The earlier explicit RC used Python `1.0.0rc1` and Rust `1.0.0-rc.1`.
 Use `--channel rc` for the RC preflight; the default `final` channel accepts
 only final versions. Mixed channels or RC numbers are rejected.
 The operator approved the sandbox policy and utility criteria in utility-run.md.

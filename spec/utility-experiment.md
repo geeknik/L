@@ -1,9 +1,15 @@
 # Real-agent utility release evidence
 
-The checked-in `benchmarks/utility_protocol.json` is approved and frozen at commit
-`541cb181412b222d228adaa0d4f46a2c4db7206e`, binding adapter revision
-`4edf0e14162cef0ec9d8637780fcd9fcbca87452`. It is a protocol, not a measurement.
-The paired run uses all 97 registered AgentDojo v1.2.2 tasks and the isolated
+The checked-in `benchmarks/utility_protocol.json` now binds the final-version
+candidate `6336916d5a3e02fae00081e71936787db747ec53`. The approved tasks, policy,
+prompt, dependency lock and thresholds are unchanged. Fresh final-candidate
+measurements are retained separately in `release-evidence/utility-final-2026-11-16/`;
+no passing result is claimed before the complete run and trace validation.
+
+The preceding owned-host run used protocol commit
+`541cb181412b222d228adaa0d4f46a2c4db7206e` and adapter
+`4edf0e14162cef0ec9d8637780fcd9fcbca87452`. It is historical candidate evidence.
+That paired run used all 97 registered AgentDojo v1.2.2 tasks and the isolated
 policy described in utility-run.md. All 194 arms completed and passed the frozen
 utility criterion; retained results and traces are in
 `release-evidence/utility-owned-host-2026-11-15/`: 94/97 successes in each arm,

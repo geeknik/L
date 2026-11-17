@@ -49,15 +49,13 @@ a missing implementation dependency. Before publication, run final clean release
 preflight, review the retained evidence/artifacts and select the publication
 destination with maintainer approval. No tag, push or publication is implied.
 
-The explicit RC uses Python `1.0.0rc1` and Rust `1.0.0-rc.1`. Its version and
-release-tool changes are outside the previously measured source revision. The
-retained 94/97 result remains evidence for that recorded candidate; it is not
-a fresh RC or final measurement. For a final 1.0 release, finish code changes,
-set both package versions to `1.0.0`, refresh the lockfiles, verify and commit the
-source, then freeze and measure that exact candidate. The default final preflight
-must pass with its retained traces. Use an RC freeze and `--channel rc` only when
-publishing an RC; a later final-version bump would require another measurement.
-The exact-source evidence check remains unchanged. See [deployment.md](deployment.md).
+Both package manifests and locks now use `1.0.0`. Candidate source
+`6336916d5a3e02fae00081e71936787db747ec53` passed software/artifact checks and
+runtime, Rust and benchmark dependency audits before protocol freeze. The fresh
+paired run belongs in `release-evidence/utility-final-2026-11-16/`. Completion and
+passing outcomes must be established from retained results and traces; the older
+94/97 result does not certify this candidate. The default final release preflight
+must pass before publication. See [deployment.md](deployment.md).
 
 The following are deployment responsibilities and explicit profile limits:
 
