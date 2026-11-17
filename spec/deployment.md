@@ -81,7 +81,17 @@ unchanged since measurement. Later documentation/protocol commits are permitted;
 changes to executable code or measured manifests/scripts require new measurements.
 The retained owned-host run certifies its recorded 1.0.0 candidate, not the later
 RC metadata/tooling revision. Do not rewrite its protocol or traces to relabel it.
-Freeze and measure the RC source before claiming RC release preflight success.
+Choose the intended release channel before the last measurement:
+
+- For RC publication, freeze and measure the RC source and use `--channel rc`.
+- For final 1.0 publication, first set both manifests to `1.0.0`, refresh both
+  lockfiles, complete code changes and verification, and commit that source.
+  Freeze the protocol against that commit, run and retain the paired experiment,
+  then use the default final preflight. An RC measurement cannot certify a later
+  final-version bump under the exact-source rule.
+
+Do not run an extra RC experiment merely as a prerequisite to the final one.
+The historical measurements remain separate evidence for their own revisions.
 Merely setting a candidate version does not authorize publication.
 Run `python scripts/release_check.py --results <measured-results.json> --trace-root <directory>` under the
 project environment. A zero exit is a technical preflight, not permission to

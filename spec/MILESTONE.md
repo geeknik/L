@@ -52,9 +52,12 @@ destination with maintainer approval. No tag, push or publication is implied.
 The explicit RC uses Python `1.0.0rc1` and Rust `1.0.0-rc.1`. Its version and
 release-tool changes are outside the previously measured source revision. The
 retained 94/97 result remains evidence for that recorded candidate; it is not
-a fresh RC measurement. Freeze the RC source and retain a new paired run before
-`--channel rc` release preflight can pass. The exact-source evidence check remains
-unchanged. See [deployment.md](deployment.md).
+a fresh RC or final measurement. For a final 1.0 release, finish code changes,
+set both package versions to `1.0.0`, refresh the lockfiles, verify and commit the
+source, then freeze and measure that exact candidate. The default final preflight
+must pass with its retained traces. Use an RC freeze and `--channel rc` only when
+publishing an RC; a later final-version bump would require another measurement.
+The exact-source evidence check remains unchanged. See [deployment.md](deployment.md).
 
 The following are deployment responsibilities and explicit profile limits:
 

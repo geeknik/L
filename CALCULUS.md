@@ -15,7 +15,7 @@ L consists of seven core acts, each with explicit syntax and label structure:
 
 ```text
 ASSERT ev:(<principal-id>, sha256:<hash>) data:<opaque | string>
-DIRECT cap:<hash> (scope:<dotted>, exp=<seconds>, from:<principal>) call tool:<reference> {key: value}
+DIRECT cap:<hash> (scope=<dotted>, exp=<seconds>, from=<principal>) call tool:<reference> {key: value}
 COMMIT <reference>
 GRANT  <capability-spec>
 REVOKE <capability-spec>
@@ -25,10 +25,13 @@ QUERY  ev:(<principal-id>, sha256:<hash>) data:<opaque | string>
 
 ### Reference Format
 
-Every reference is `(<type>:<id>, sha256:<content-hash>)` where:
-- `<type>`: `user:<g>`, `srv:<hex>`, `admin`
-- `<content-hash>`: 256-bit hex string (lowercase)
-- `<id>`: principal identifier (e.g., `user:g`, `srv:9c1e`)
+A named reference is `(<principal>, sha256:<content-hash>)`, for example
+`(srv:files, sha256:abcdef00)`. Principal syntax, including bare names such as
+`admin`, is defined in [spec/principals.md](spec/principals.md).
+The structural grammar accepts hexadecimal hash tokens of at least eight digits;
+this compatibility syntax does not authenticate a principal or authorize a tool.
+Signed capability identifiers and tool bindings require full lowercase SHA-256
+values under [spec/security-gate.md](spec/security-gate.md).
 
 ### Capability Spec
 
@@ -123,10 +126,13 @@ Model-written ENDORSE, GRANT and REVOKE refuse at the security boundary.
 
 ### Rule 4: References and expiry
 
-Security references require named principals and full lowercase SHA-256 hashes.
+SecurityGate refuses anonymous references. Signed capability and tool bindings
+require named principals and full lowercase SHA-256 hashes.
 The signed grant binds the tool identity and content hash. TTL syntax remains
 an integer in `1..=i64::MAX`; security execution additionally bounds it by the
-signed lifetime and enforces absolute expiry using the host's monotonic clock.
+signed lifetime and enforces absolute expiry using trusted epoch seconds.
+The gate rejects backward clock movement; transport deadlines use a separate
+monotonic clock.
 Rollback, replay and revoked capabilities refuse. Nonprivileged surface acts
 have no issuance metadata; full transcript expiry remains a design obligation.
 

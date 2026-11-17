@@ -1,257 +1,176 @@
 # L: A Trust-Typed Language for Agents
 
-L is a seven-act language with Python and Rust parsers, structural scanners,
-and a separate stateful security gate. **1.0 is not released.** No formal
-non-interference guarantee is claimed.
+L separates an AI agent's proposed actions from the authority to execute them.
+It combines a small, typed message language with a deterministic security gate
+and a local enforcing host. Python and Rust implementations share language,
+wire-format, and signed-authority contracts.
 
-## Status (2026-11-15)
+The host assigns trust labels to inputs. After reading untrusted content, an
+agent cannot perform an action requiring higher integrity unless a trusted
+operator signs an endorsement of that exact action. Model-generated text cannot
+create authority, change its own labels, or turn quoted data into executable acts.
 
-The security API (`gate/security.py`, `rust/src/security.rs`) verifies our own
-signed authority statements using established Ed25519 libraries. It enforces
-trusted capability lookup, exact scope/tool binding, absolute expiry,
-revocation, replay refusal, session integrity that only decreases, and one-use
-endorsement of the exact action bytes. Trust keys and input labels come from
-the host, never from model text. See [the contract](spec/security-gate.md).
+## How it works
 
-The existing `Gate`, CLI scanner and MCP proxy remain **structural tools**.
-Their ALLOW result is not permission to execute a tool. The proxy has no upstream
-transport or authority integration. Model-written GRANT/REVOKE/ENDORSE cannot
-mutate SecurityGate authority; its signed `apply` API is the only state-changing
-entry point.
+1. **Register tools and trust keys.** The host binds each tool to its principal,
+   definition hash, and confidentiality policy. Trusted public keys have explicit
+   scopes, signing roles, and integrity ceilings.
+2. **Issue a capability.** An offline authority signs a grant for a particular
+   session, tool, scope, required integrity, and expiration time.
+3. **Observe inputs.** The host tracks provenance, confidentiality, and the lowest
+   integrity of the inputs seen during the session.
+4. **Authorize an action.** The gate verifies the proposed `DIRECT` against the
+   live grant. If integrity is insufficient, it requires a signed, one-use
+   endorsement bound to the exact UTF-8 action bytes.
+5. **Execute through the host.** Only validated arguments reach the registered
+   tool. Revocation removes the grant and approvals while retaining replay
+   protection for the session.
 
-Other completed hardening includes shared parser/traversal/audit bounds,
-sanitized diagnostics, minimum-integrity label joins, shared principal vectors,
-full-AST differential comparison, and fail-closed verification runners.
+Capabilities and endorsements use Ed25519 through established cryptographic
+libraries. There are no built-in trusted identities or automatic approvals.
 
-`gate/host.py` is a local reference integration: it checks model/tool recipient
-clearance, accumulates provenance and taint, binds registered tool definitions,
-and dispatches only validated arguments. It creates fresh unresumable sessions;
-old grants cannot authorize a new session. Trusted adapters supply I/O deadlines.
+## Get started
 
-`gate/process.py` supplies bounded POSIX subprocess adapters with enforced
-deadlines and fixed schemas. `gate/keystore.py` supports encrypted authority-key
-backup/restore; `LocalHost.rotate_trust` retires old authority without clearing
-taint. `lang/wire.py` and `rust/src/wire.rs` implement canonical CBOR and lossless
-JSON AST projection. See [deployment instructions](spec/deployment.md).
+The Python package requires Python 3.12 or newer. The enforcing host and process
+adapters require a POSIX system. Use [uv](https://docs.astral.sh/uv/) to install the
+locked project environment from source:
 
-`tsd-host` is our own local enforcing service over private inherited stdio pipes.
-`tsd-authority` creates and loads encrypted signing keys and signs explicit
-operator-reviewed statements offline. The host receives only public keys and
-protected tool configuration. See [the owned-host contract](spec/owned-host.md)
-and [operator workflow](spec/owned-host-operations.md).
-These components use existing cryptographic libraries and require no external
-host or key-storage service. Separate OS identities must isolate authority
-custody from model and tool processes.
-
-The assistant has used the gate interactively for real temporary file operations.
-[Dogfood results](spec/DOGFOOD-2026-11-15.md) record the successful task, refused
-probes, and a source-string defect found and fixed during integration. Run
-`uv run --locked python -m demos.dogfood_host` for the bounded JSON-line interface;
-its [contract](spec/dogfood.md) distinguishes this exercise from the required
-standard-benchmark utility experiment.
-
-The owned-host candidate's approved paired AgentDojo experiment is complete:
-baseline and gated runs each passed 94/97 tasks, with zero harmful paired
-regressions. The computed
-one-sided 95% upper bound is 3.04 percentage points, below the approved 5-point
-threshold. All 194 arms and the three tasks failed by both arms are retained in
-[the evidence](release-evidence/utility-owned-host-2026-11-15/README.md). This measures
-low-integrity sandbox autonomy, not production endorsement costs or security
-against malicious agents.
-
-The [earlier candidate's measurements](release-evidence/utility-2026-11-15/README.md)
-remain separate historical evidence; they are not pooled with this run.
-Owned-host integration and full local verification pass; see
-[the verification report](spec/OWNED-HOST-VERIFICATION.md). Publication still
-requires final release preflight, a destination and maintainer approval.
-See [the milestone checklist](spec/MILESTONE.md). Core SecurityGate state remains
-process-local; restarting it with an old subject would discard replay protection.
-
-## Enforcement boundary
-
-1. The host assigns initial integrity and calls `observe` for inputs. Combining
-   influences takes the minimum integrity; model text cannot raise it.
-2. A DIRECT requires an unexpired signed grant for the exact subject, scope,
-   tool principal and content hash. Its required integrity is trusted metadata.
-3. Insufficient integrity requires a signed endorsement of the exact UTF-8
-   DIRECT source. That approval is consumed on success, never a session upgrade.
-4. Signed statements reject unknown keys, forged signatures, duplicate/unknown
-   fields, invalid time, replay and changed bindings. Capacity exhaustion blocks
-   further privileged operations. Audits retain only bounded sanitized metadata.
-
-## Language Syntax
-
-### Core Acts
-
-All acts are capitalized keywords; fields are separated by whitespace.
-
-```text
-ASSERT ev:(<principal-id>, sha256:<hash>) data:<opaque | string>
-DIRECT cap:<hash> (scope:<dotted>, exp=<seconds>, from:<principal>) call tool:<reference> {key: value}
-COMMIT <reference>
-GRANT  <capability-spec>
-REVOKE <capability-spec>
-ENDORSE <reference> by:<principal-id>
-QUERY  ev:(<principal-id>, sha256:<hash>) data:<opaque | string>
+```bash
+git clone https://github.com/geeknik/L.git
+cd L
+uv sync --locked
 ```
 
-### Reference Format
+Run a local demonstration of the security boundary:
 
-`(<type>:<id>, sha256:<content-hash>)`
+```bash
+uv run --locked python -m demos.security_demo
+```
 
-- Type: `user:<g>`, `srv:<hex>`, `admin`
-- Content hash: full 256-bit hex
+The demo refuses an unendorsed action, executes the exact approved callback once,
+and refuses another action after revocation. It uses an ephemeral authority and
+a fixed local callback; it is not a production signing policy.
 
-### Principal Binding
+To exercise the actual host and offline authority CLIs:
 
-Every reference binds a principal to a content hash. A hash binds content; it is not proof of authority. Authority comes from a
-verified signature under an explicitly trusted key.
+```bash
+uv run --locked python demos/owned_host.py
+```
 
-### Integrity Levels
+This creates temporary keys and configuration, tests authorized file effects and
+negative cases, and removes its temporary state on normal completion. Follow the
+[operator guide](spec/owned-host-operations.md) to provision a real deployment
+with separate OS identities and protected configuration.
 
-`low < medium < high < critical`
+## Tools and libraries
 
-`Label.join()` takes the minimum integrity, maximum confidentiality, and union
-of provenance. SecurityGate tracks session integrity conservatively; it cannot
-infer inputs the host failed to report.
+| Component | Purpose |
+| --- | --- |
+| `tsd-host` | Enforcing service over private inherited stdin/stdout pipes; dispatches configured tools after authorization |
+| `tsd-authority` | Offline key initialization, public-key recovery, and signing of explicitly reviewed statements |
+| `gate.host.LocalHost` | Python integration API for trusted model and tool adapters |
+| `gate.security.SecurityGate` | Stateful authorization API; verifies signed authority and proposed actions |
+| `rust/` | Rust language, wire-format, authority, and security-gate counterparts |
+| `tsd-scan` | Structural language validation; does not authorize or execute tools |
+| `tsd-proxy` | Structural MCP/JSON-RPC inspection scaffold; does not forward upstream requests or enforce signed authority |
 
-### Capability Spec
+For CLI options, run `uv run --locked tsd-host --help` or
+`uv run --locked tsd-authority --help`. The
+[host protocol](spec/owned-host.md) defines configuration and request schemas;
+the [library contract](spec/local-host.md) describes direct Python integration.
 
-`cap:<hash> (scope=fs.read, exp=60, from=user:g)`
+## The language
 
-- Scope: dotted domain of authority, e.g. `fs.read`, `net.api.call`
-- Expiry: positive integer TTL. The structural checker validates syntax only.
-  SecurityGate also enforces the signed absolute deadline and grant lifetime.
-- From: principal issuing the directive
+L has seven acts: `ASSERT`, `QUERY`, `DIRECT`, `COMMIT`, `GRANT`, `REVOKE`, and
+`ENDORSE`. Text inside a payload remains data. References combine a principal
+with a content hash; a hash alone does not authenticate authority.
 
-## Verification
+A proposed tool action looks like this:
 
-Run from the repository root with Python 3.12+ and Rust installed:
+```text
+DIRECT cap:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  (scope=files.read, exp=60, from=operator)
+  call tool:(srv:files, sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb)
+  {path: "/reports/summary.txt"}
+```
+
+The hashes above are illustrative. Execution requires a live signed grant with
+the actual session and tool bindings; parsing this text grants no permission.
+Model-written `GRANT`, `REVOKE`, and `ENDORSE` cannot change security-gate state.
+That state changes only through verified signed statements.
+
+Tool parameters are strings or nonnegative integers bounded by `i64::MAX`.
+Duplicate keys and unsupported value types are rejected. Source strings preserve
+backslashes literally and represent an embedded quotation mark by doubling it.
+The structural checker validates TTL syntax; the security gate also enforces the
+signed absolute expiration and grant lifetime.
+
+See the [calculus](CALCULUS.md), [principal grammar](spec/principals.md),
+[source-string rules](spec/source-strings.md), and
+[canonical binary wire format](spec/wire.md) for the complete contracts.
+
+## Security boundaries
+
+- All influencing inputs and tool effects must pass through trusted host adapters.
+  The gate cannot detect inputs that an adapter hides from it.
+- Integrity accumulates conservatively across the session. Endorsement permits
+  one exact action; it does not raise the session's integrity.
+- Sessions are process-local and never resumed. Restart creates a fresh subject;
+  old grants and approvals cannot authorize the new session.
+- Keep signing keys and wrapping material under an operator identity isolated
+  from model/tool processes. Filesystem custody does not protect against root or
+  compromise of that operator account.
+- Process adapters bound communication and process-group lifetime. They are not
+  an OS sandbox; deployer-controlled isolation must contain untrusted tools and
+  detached descendants.
+- A signed tool is not necessarily a safe tool. Review its implementation,
+  configuration, clearances, and side effects. Do not automatically retry after
+  an uncertain or partially completed effect.
+
+The [security contract](spec/security-gate.md) and
+[deployment guide](spec/deployment.md) define these assumptions. The project does
+not claim a mechanized proof, formal non-interference guarantee, or protection
+for execution outside the enforcing host.
+
+## Development and verification
+
+Full verification also requires Rust with Clippy. From the repository root:
 
 ```bash
 uv sync --locked
 uv run --locked python scripts/verify.py
 ```
 
-The single runner checks generated limits, Rust tests and Clippy (all targets,
-warnings denied), strict Python typing, tests with ResourceWarnings treated as errors,
-conformance, exploit contracts, deterministic differential fuzzing, and the
-synthetic microbenchmark. `.github/workflows/verify.yml` runs the same command.
-A local pass is not evidence that hosted CI has run.
+The runner checks generated limits, strict Python typing, Python and Rust tests,
+Clippy, conformance vectors, exploit contracts, differential fuzzing, and package
+builds with isolated installation. CI also audits locked dependencies.
 
-For targeted work:
+Useful focused commands:
 
 ```bash
 uv run --locked python -m unittest tests.test_security_gate
 cargo test --locked --manifest-path rust/Cargo.toml --test security_tests
 uv run --locked python conformance/diff_fuzz.py 500 --seed 0
-uv run --locked python -m cli.tsd_scanner demos/full_demo.tsd
-uv run --locked python -m demos.security_demo
-uv run --locked python scripts/check_artifacts.py
+uv run --locked tsd-scan demos/full_demo.tsd
 ```
 
-The differential oracle compares complete ASTs and structural decisions,
-distinguishes crashes from parse refusal, and builds the Rust binary before
-comparison. Shared signed vectors exercise both security implementations;
-ordinary parser fuzzing is not a proof of the stateful security system.
+The scanner's success means structural acceptance only. Shared signed vectors
+exercise cross-language security behavior; parser agreement alone does not prove
+stateful authorization. Synthetic timings measure throughput, while the
+[utility experiment](spec/utility-experiment.md) evaluates paired task outcomes
+under a declared sandbox policy.
 
-## Synthetic Benchmark (smoke / microbenchmark, NOT the utility experiment)
+## Documentation
 
-The benchmark suite runs 5 fixed synthetic task patterns and reports
-parse/gate latency:
+- [Design](DESIGN.md): project goals and architectural direction.
+- [Operator guide](spec/owned-host-operations.md): provisioning, signing, rotation,
+  and recovery.
+- [Authority lifecycle](spec/authority-lifecycle.md): encrypted custody and session
+  retirement.
+- [Limits](spec/limits.md): shared bounds on parsing, execution, and state.
+- [Release acceptance](spec/MILESTONE.md): candidate readiness and remaining gates.
+- [RC review](spec/RC-HARDENING-2026-11-16.md): dated verification and its limits.
 
-```bash
-cd tsd && PYTHONPATH=. python3 benchmarks/run_benchmark.py
-```
+## License
 
-It runs 5 scripts (endorsement, file access, log analysis, network access,
-revocation) and reports per-task parse/gate latency, acts per task, pass
-rate, and acts/sec throughput (averages are per task, not per act).
-Parse and gate timings are measured separately. Empty programs do not pass.
-This is **not** DESIGN.md's utility experiment: no agent runs, no real tool
-executes, and no task outcome is measured against an ungated baseline. Throughput
-numbers are machine/load dependent; use a fresh run instead of a release claim.
-
-## Structural scanner and proxy
-
-The CLI exits 0 for structural acceptance, 1 for validation failure and 2 for
-I/O or unexpected failure. It bounds input before parsing. The MCP scaffold
-validates line-delimited JSON-RPC, frame sizes, duplicate keys, IDs, finite
-numbers and params; recursively inspects bounded string arguments; and preserves
-notification silence. Both sandbox and gate audit buffers are bounded and do
-not retain raw program excerpts. See [limits](spec/limits.md) and
-[proxy boundary](spec/proxy-boundary.md).
-
-## Error Codes
-
-- `INTEGRITY.DIRECT.DENIED`
-- `ENDORSE.UNAUTHORIZED`
-- `REFERENCE.INVALID`
-- `EXPIRY.INVALID`
-
-## File Structure
-
-| Path | Purpose |
-| --- | --- |
-| `spec/` | Security contract, shared limits, grammar and milestone criteria |
-| `lang/`, `gate/` | Python parser, labels, structural gate, authority and security gate |
-| `gate/host.py` | Local enforcing host with registered callbacks and information-flow checks |
-| `gate/service.py`, `gate/custody.py` | Project-owned stdio service and offline authority custody |
-| `rust/` | Rust counterparts and integration tests |
-| `proxy/`, `cli/` | Structural MCP scaffold/scanner and enforcing host/authority entry points |
-| `conformance/`, `tests/` | Shared vectors, differential oracle and regressions |
-| `benchmarks/`, `demos/` | Synthetic measurements and local negative fixtures |
-| `scripts/` | Limits generator and verification entry point |
-
-## Exploit Demos
-
-Two demo programs demonstrate that the gate blocks common agent-based
-attacks:
-
-- **TSD-1** (`demos/exploit_tsd_1.tsd`) — content-swap exploit: references
-  by principal without binding to an exact content hash. Rejected at
-  parse time (ungrammatical) and at gate time (`REFERENCE.INVALID`).
-- **TSD-4** (`demos/exploit_tsd_4.tsd`) — missing/invalid expiry: acts with
-  non-positive TTL. Rejected at gate time (`EXPIRY.INVALID`).
-
-Run the exploit demo runner to verify all attacks are blocked:
-
-```bash
-cd tsd && PYTHONPATH=. python3 demos/run_exploits.py
-```
-
-The runner exits 0 only when every exploit is blocked by an expected defense
-(parse-time rejection for TSD-1; for TSD-4, successful parsing of exactly
-the expected number of acts, each DENIED with the expected error code in
-order); unexpected parses, act counts, codes, or exceptions exit 1.
-
-## One-Page Calculus
-
-The formal core is specified in `CALCULUS.md`:
-
-- Core syntax and reference format
-- Label lattice (provenance, integrity, confidentiality)
-- Operational semantics of the four rules
-- Soundness sketch (intended, NOT established — no proof exists for the
-  current implementation)
-- Cross-references to the reference implementation
-
-The proof artifacts (Python + Rust implementations, conformance suite,
-differential fuzzer) live in this repository and are described, with their
-limits, in `CALCULUS.md`.
-
-## Roadmap
-
-1.0 means the DESIGN.md security gate, not a relabeled structural scanner.
-The remaining acceptance criteria are tracked in [spec/MILESTONE.md](spec/MILESTONE.md).
-The RC versions are Python `1.0.0rc1` and Rust `1.0.0-rc.1`.
-`uv run --locked python scripts/release_check.py --channel rc --results PATH --trace-root DIR`
-checks RC version/license/source/evidence prerequisites before running all software
-checks. Omit `--channel rc` only for final `1.0.0` packages.
-The approved owned-host experiment is complete for its recorded implementation.
-Its retained evidence does not certify the later RC packaging changes: preflight
-preserves exact measured-source binding, so the RC needs a fresh source-bound
-measurement before publication. The project is [MIT licensed](LICENSE).
-Passing preflight does not publish a release:
-artifact review, a publication destination and maintainer approval remain required.
-No tag, publication or formal guarantee is implied.
+[MIT](LICENSE).
