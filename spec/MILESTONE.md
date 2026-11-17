@@ -38,6 +38,9 @@ not satisfy 1.0. MIT is selected; no release or formal proof is implied.
   approved sandbox utility criterion for the recorded owned-host candidate.
   The earlier run remains historical; later code changes require new measurement.
 
+The [RC hardening review](RC-HARDENING-2026-11-16.md) records the latest
+feature-to-test mapping, corrected defects and candidate-evidence boundary.
+
 ## Release and deployment obligations
 
 The supported local host, offline custody and candidate-bound utility measurement
