@@ -89,3 +89,37 @@ A fresh full experiment requires operator authorization and passing checks.
 Freeze the revised prompt and launcher/source before it
 begins; retain the failed run separately and preserve the original acceptance
 thresholds, task population and authority policy.
+
+
+## Coordinator usage
+
+After a new source/protocol freeze, set `AGENTDOJO_DIR` to the pinned benchmark
+checkout, `PROTOCOL_COMMIT` to the exact freeze commit, and `LAUNCH_DIR` to a new
+absolute destination whose parent exists. Choose a short destination path. Run:
+
+```bash
+uv run --locked python -m benchmarks.launch_arm prepare \
+  --checkout "$AGENTDOJO_DIR" \
+  --protocol benchmarks/utility_protocol.json \
+  --protocol-commit "$PROTOCOL_COMMIT" \
+  --destination "$LAUNCH_DIR"
+```
+
+Preparation prints the manifest digest. Retain the manifest and digest with the
+new experiment's provenance. It creates `arms/0000b`, `arms/0000g`, and subsequent
+index wrappers, separate `traces/<token>/` directories and an `attempts/` store.
+Preparation does not start a task. Give each fresh agent its one absolute wrapper
+path; it invokes that executable once with `tty=true` and no extra arguments.
+Do not hand agents the prepare command or ask them to reconstruct run arguments.
+
+After each arm, independently check `attempts/<token>/status.json` against the
+assignment and returned trace. Wait for the terminal lifecycle state, not merely
+a model's completion message. Retain each status record and content-addressed
+trace. Do not infer success from process exit, delete claims, reuse a destination,
+or restart incomplete attempts. Missing status or a refusal before claim remains
+an orchestration failure to record in the coordinator ledger.
+
+The launcher validates lifecycle bindings. Full release acceptance still requires
+all frozen pairs, full trace validation, independent provenance review, and clean
+release preflight. An existing historical protocol cannot authorize measurement
+of a changed launcher or prompt.

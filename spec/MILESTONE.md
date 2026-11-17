@@ -60,6 +60,14 @@ A fresh full run requires an explicit restart decision under the frozen no-retry
 policy. The older 94/97 result does not certify this candidate. The default final release preflight
 must pass before publication. See [deployment.md](deployment.md).
 
+The [manifest launcher](benchmark-launch.md) now replaces agent-reconstructed
+launch arguments with digest-bound wrappers, atomic attempt claims and lifecycle
+records. Its 22 focused tests pass on the default interpreter and Python 3.12;
+the full suite passes 406 Python tests and 95 Rust tests. This verifies the
+orchestration fix, not a fresh utility result. No new benchmark tasks ran during
+that validation; the failed run and frozen protocol remain intact. The revised
+launcher/prompt must be committed and newly frozen before another full run.
+
 The following are deployment responsibilities and explicit profile limits:
 
 1. **Actual deployment:** the current assistant now uses a real local tool adapter
