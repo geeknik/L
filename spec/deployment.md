@@ -8,8 +8,7 @@ profile owns its transport, protected configuration and encrypted key custody;
 no external host or secret-manager product is required. The model receives only
 the private pipe endpoints, not authority files or operator configuration.
 See [the operator workflow](owned-host-operations.md) for provisioning, explicit
-signing, rotation and recovery, and [verification](OWNED-HOST-VERIFICATION.md)
-for the tested lifecycle and its limits.
+signing, rotation, recovery, and local lifecycle verification.
 
 The Python LocalHost library also supports trusted, fixed model/tool adapters. POSIX
 process adapters provide bounded JSON I/O and deadlines; they are not an OS
@@ -63,15 +62,13 @@ containment. No automatic retry follows partial tool effects.
 
 ## Final release gates
 
-MIT is selected. The current final candidate uses `1.0.0` in both manifests.
-The earlier explicit RC used Python `1.0.0rc1` and Rust `1.0.0-rc.1`.
-Use `--channel rc` for the RC preflight; the default `final` channel accepts
-only final versions. Mixed channels or RC numbers are rejected.
-The operator approved the sandbox policy and utility criteria in utility-run.md.
+The final preflight requires `1.0.0` in both package manifests. The `--channel rc`
+preflight requires Python `1.0.0rc1` and Rust `1.0.0-rc.1`; mixed channels or other
+RC numbers are rejected. Approve the sandbox policy and utility criteria before
+measurement, as described in [utility-experiment.md](utility-experiment.md).
 Commit the complete protocol before starting paired baseline/gated tasks, and
 independently inspect retained traces. No fabricated results may substitute for
-these measurements. This assistant is the agent; separate provider credentials
-are not needed for the isolated benchmark profile.
+these measurements.
 
 Before freezing the experiment, set candidate package versions and refresh locks,
 verify all software/artifact/advisory checks, and commit the reviewed source.
@@ -79,8 +76,7 @@ Record that commit as adapter_revision. The preflight requires it to exist and
 requires runtime, adapter, benchmark code and dependency manifests to remain
 unchanged since measurement. Later documentation/protocol commits are permitted;
 changes to executable code or measured manifests/scripts require new measurements.
-The retained owned-host run certifies its recorded 1.0.0 candidate, not the later
-RC metadata/tooling revision. Do not rewrite its protocol or traces to relabel it.
+Do not rewrite a measured protocol or traces to relabel an earlier result.
 Choose the intended release channel before the last measurement:
 
 - For RC publication, freeze and measure the RC source and use `--channel rc`.
@@ -96,7 +92,7 @@ Merely setting a candidate version does not authorize publication.
 Run `python scripts/release_check.py --results <measured-results.json> --trace-root <directory>` under the
 project environment. A zero exit is a technical preflight, not permission to
 publish. Confirm distribution contents, license, source revision and destination
-before a maintainer publishes or tags. No release has been published by this work.
+before a maintainer publishes or tags.
 
 The license preflight checks matching Python/Rust SPDX identifiers (MIT,
 Apache-2.0 or LicenseRef-Proprietary) and a nonempty LICENSE. Maintainers must

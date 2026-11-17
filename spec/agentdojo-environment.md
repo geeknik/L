@@ -20,11 +20,10 @@ install fails with `ModuleNotFoundError: editables`. The lock resolves and hashe
 all transitive dependencies. Optional transformers, upstream dev and docs groups
 are excluded. No model or provider credentials are part of the environment.
 
-The upstream historical lock was not retained: pip-audit 2.10.1 reported 78
-advisory entries in 17 packages. A fresh resolution within the declared upstream
-dependency ranges was audited on 2026-11-15 with no known vulnerabilities.
-This is an advisory snapshot, not proof of absence of vulnerabilities. The
-patched dependency environment differs from upstream's historical environment;
+The lock resolves dependencies within the declared upstream ranges rather than
+reusing upstream's historical lock. Audit it before use; an advisory check is a
+snapshot, not proof of absence of vulnerabilities. This dependency environment
+differs from upstream's historical environment;
 results must identify both the source commit and this lock's hash. Dependency
 imports and package compatibility do not prove identical benchmark behavior.
 
@@ -54,16 +53,10 @@ uv tool run pip-audit==2.10.1 --require-hashes --disable-pip \
 Python 3.12 virtual environment already created. Editable installation binds to
 that checkout, so keep its source unchanged during the frozen evaluation.
 
-## Verified scope
-
-Python 3.12.16, 79 installed packages including AgentDojo; `uv pip check`
-reports compatibility. `agentdojo.task_suite` imports and `get_suites` works.
-Only suite names and counts were read; no task prompts, solutions, model calls,
-utilities or task execution were performed in this environment validation.
+## Task catalog
 
 The pinned checkout exposes 97 registered user tasks for `v1.2.2`: workspace 40,
 travel 20, banking 16, slack 21. All available version aliases expose the same
-counts. The anticipated count of 86 was not confirmed; a smoke assertion for
-86 failed. Any 86-task evaluation must separately define and freeze its selection
-rather than silently dropping registered tasks. This environment validation does
-not certify a task selection or benchmark result.
+counts. Evaluations using a subset must separately define and freeze their
+selection rather than silently dropping registered tasks. Environment checks
+do not certify a benchmark result.

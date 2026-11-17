@@ -2,18 +2,11 @@
 
 Nov 13, 2026 · @Brian Carpenter
 
-> **Status (2026-11-15).** This remains the design target. The new Python and
-> Rust SecurityGate implement local signed authority, stateful grants/revocation,
-> exact-action endorsement and minimum-integrity session taint. The old scanner
-> and MCP proxy are structural tools. A local reference host exercises actual
-> callbacks, confidentiality and provenance. Canonical wire/projection, encrypted
-> key restore/rotation and bounded process transport are implemented; deployment
-> provisioning now has project-owned local stdio and offline custody tooling.
-> Integration verification passes. The owned-host candidate completed all 97
-> paired sandbox tasks: 94 successes in each arm, zero harmful regressions,
-> passing the frozen utility criterion. Release review/publication remain;
-> later executable changes require new measurements. See
-> [spec/MILESTONE.md](spec/MILESTONE.md).
+> This document describes the design target. The implemented security boundary
+> is defined in [spec/security-gate.md](spec/security-gate.md), with local host
+> integration in [spec/local-host.md](spec/local-host.md). The scanner and MCP
+> proxy perform structural validation only. These contracts do not imply an
+> end-to-end security proof.
 
 ## Thesis
 

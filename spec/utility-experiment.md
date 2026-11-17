@@ -1,33 +1,13 @@
 # Real-agent utility release evidence
 
-The checked-in `benchmarks/utility_protocol.json` binds the manifest-launcher
-candidate `292a54009c2bac4863d8ca186146d1a369f447f8`, frozen in commit
-`fc8a2aec1a8cddd0683c5a96940b65b94fbf90d3`. The operator approved this fresh
-experiment after launcher verification. Only the candidate revision and launcher
-prompt hash changed; tasks, policy, dependency lock, budgets and thresholds stayed
-fixed. The run in `release-evidence/utility-manifest-2026-11-17/` stopped on a
-platform execution error with 21 completed traces, one failed launch and 172
-unstarted arms. It cannot satisfy the release gate. See the
-[incident](../release-evidence/utility-manifest-2026-11-17/INCIDENT.md).
+The utility experiment compares baseline and gated agents on a frozen task set.
+`benchmarks/utility_protocol.json` defines the approved benchmark revision,
+tasks, agent settings, policy and acceptance thresholds. The report checker
+validates complete paired results and their retained trace artifacts.
 
-The preceding final-version attempt in `release-evidence/utility-final-2026-11-16/`
-stopped on a launch-path transcription error with 51 completed traces, one failed
-launch and 142 unstarted arms. Both incomplete runs remain separate; no arm was
-retried, no outcomes were pooled, and neither has a passing report.
-
-The preceding owned-host run used protocol commit
-`541cb181412b222d228adaa0d4f46a2c4db7206e` and adapter
-`4edf0e14162cef0ec9d8637780fcd9fcbca87452`. It is historical candidate evidence.
-That paired run used all 97 registered AgentDojo v1.2.2 tasks and the isolated
-policy described in utility-run.md. All 194 arms completed and passed the frozen
-utility criterion; retained results and traces are in
-`release-evidence/utility-owned-host-2026-11-15/`: 94/97 successes in each arm,
-zero harmful paired regressions, and a one-sided 95% upper bound of 3.04 percentage
-points against the approved 5-point maximum. The earlier
-`release-evidence/utility-2026-11-15/` run is separate historical evidence and is
-not pooled with this run. Broader release obligations remain in
-[MILESTONE.md](MILESTONE.md). Upstream source:
-https://github.com/ethz-spylab/agentdojo/tree/089ed468cf3ed0322acc66b0211f26d9d90dbf60
+Experiment records and operational reports are maintained locally, outside the
+public source tree. The requirements below describe evidence validation; they
+do not claim that a particular candidate has passed.
 
 Before any release experiment, the operator must select/approve the benchmark
 revision and exact task IDs, model/version/settings, maximum step budget,

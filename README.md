@@ -168,8 +168,7 @@ under a declared sandbox policy.
 - [Authority lifecycle](spec/authority-lifecycle.md): encrypted custody and session
   retirement.
 - [Limits](spec/limits.md): shared bounds on parsing, execution, and state.
-- [Release acceptance](spec/MILESTONE.md): candidate readiness and remaining gates.
-- [RC review](spec/RC-HARDENING-2026-11-16.md): dated verification and its limits.
+- [Verification](spec/verification.md): command outcomes and failure handling.
 
 ## License
 

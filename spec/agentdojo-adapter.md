@@ -46,9 +46,8 @@ against the owned JSON framing bounds; rich nested arguments, including finite
 floats, remain data inside the L string. The worker uses the controller's trusted,
 payload-free internal error code to distinguish infrastructure failures from
 ordinary denial. This diagnostic is never included in host protocol responses.
-The fresh controller-integrated run is retained in
-`../release-evidence/utility-owned-host-2026-11-15/`; each measurement describes
-only its recorded adapter revision. Later executable changes require new evidence.
+Each measurement describes only its recorded adapter revision. Later executable
+changes require new evidence.
 
 The approved policy grants low-integrity authority for every registered sandbox
 tool, scoped to bench.<tool_name>, a fresh host session and exact tool definition.

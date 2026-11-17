@@ -3,7 +3,7 @@
 This coordination layer prevents solver agents from reconstructing long launch
 commands. It does not change the sandbox, task population, policy, request budget,
 utility evaluator, or release criteria. It does not authorize a new experiment.
-The incomplete 2026-11-16 run remains historical evidence and is never resumed.
+Incomplete runs remain separate records and are never resumed.
 
 ## Trust and preparation
 
@@ -87,7 +87,7 @@ cleanup and sanitized records. Verify no worker starts on setup rejection.
 
 A fresh full experiment requires operator authorization and passing checks.
 Freeze the revised prompt and launcher/source before it
-begins; retain the failed run separately and preserve the original acceptance
+begins; retain any earlier runs separately and preserve the original acceptance
 thresholds, task population and authority policy.
 
 

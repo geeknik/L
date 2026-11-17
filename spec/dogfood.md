@@ -1,10 +1,10 @@
 # Live agent dogfood profile
 
 This is an exploratory interactive test, not the frozen standard-benchmark
-release experiment. The current assistant proposes actual tool actions through
+release experiment. An interactive agent proposes actual tool actions through
 `python -m demos.dogfood_host`; the host performs actual file reads/writes in a
 fresh private temporary directory. No model response is scripted by the harness.
-The surrounding platform's tools are not intercepted. The assistant must keep
+The surrounding platform's tools are not intercepted. The agent must keep
 dogfood task effects inside this interface; this is not containment of the agent
 or protection against a malicious operator with shell access.
 
@@ -28,7 +28,7 @@ Every tool action therefore needs an exact-source, one-use signed endorsement.
 The bounded JSON-line interface has exact schemas:
 
 - `prepare`: tool read/write and arguments object; returns L source only, with no
-  signing or effect. The assistant may instead submit its own source directly.
+  signing or effect. The agent may instead submit its own source directly.
 - `approve`: source string; policy checks one DIRECT, exact capability/tool/scope,
   then signs its exact UTF-8 hash. No execution.
 - `execute`: source string; LocalHost.run alone dispatches the validated action.

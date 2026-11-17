@@ -138,6 +138,4 @@ kills its process group; it is not an OS sandbox, and detached descendants requi
 OS containment. The operator is responsible for the reviewed adapter's own input
 validation, filesystem permissions, and side effects. Forced termination or
 filesystem failure can leave temporary or incomplete local artifacts requiring
-operator cleanup. The owned-host candidate's paired utility evidence is retained
-in `../release-evidence/utility-owned-host-2026-11-15/`. It describes that exact
-implementation; later executable changes require a fresh frozen measurement.
+operator cleanup.

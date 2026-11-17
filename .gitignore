@@ -3,6 +3,17 @@
 AGENTS.md
 CLAUDE.md
 
+# Local evidence, agent notes, and internal project bookkeeping
+/release-evidence/
+/.local/
+HANDOFF.md
+AUDIT-*.md
+DOGFOOD-*.md
+MILESTONE.md
+OWNED-HOST-VERIFICATION.md
+RC-HARDENING-*.md
+RELEASE-PREP.md
+
 # Python bytecode and tool caches
 __pycache__/
 *.py[cod]

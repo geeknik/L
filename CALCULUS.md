@@ -2,12 +2,11 @@
 
 L is a minimal trust-typed language with a formally specified core calculus. The following defines the syntax, label lattice, operational semantics, and the four enforcement rules that constitute the design's central constraint.
 
-**Implementation status (2026-11-15).** The structural Gate remains a scanner.
+The structural Gate is a scanner.
 The separate SecurityGate implements signed capabilities, one-use exact-action
 endorsement, revocation, expiry and conservative session integrity in Python and
 Rust. Its normative contract is [spec/security-gate.md](spec/security-gate.md).
-These are local runtime semantics, not an end-to-end security proof or a 1.0
-release. The remaining design obligations are in [spec/MILESTONE.md](spec/MILESTONE.md).
+These are local runtime semantics, not an end-to-end security proof.
 
 ## Syntax
 
@@ -153,7 +152,7 @@ It depends on trusted host identity, clock, key provisioning, input observation,
 and execution of only the returned validated act. It does not imply that a
 signed tool is safe or that omitted host observations can be detected.
 
-## 1.0 release status and deployment limits
+## Deployment limits
 
 The MCP proxy remains a structural scaffold. Our separate `tsd-host` service
 enforces the security API over private stdio, with confidentiality recipient
@@ -169,14 +168,7 @@ this profile. Canonical binary wire encoding and lossless projection are
 implemented under `spec/wire.md`; decoding does not authorize anything or change
 exact-source approvals.
 
-MIT licensing is selected. The owned-host candidate completed the approved paired
-utility experiment: 94/97 successes in each arm, zero harmful paired regressions,
-and a one-sided 95% upper bound of 3.04 percentage points against the approved
-5-point maximum. [Retained evidence](release-evidence/utility-owned-host-2026-11-15/README.md)
-documents the measured revision and limitations; subsequent RC packaging changes
-require fresh source-bound evidence under the release contract. This measures sandbox utility,
-not general deployment safety or production approval costs. No mechanized proof
-or formal non-interference guarantee is claimed. Publication requires clean
-candidate preflight, evidence/artifact review and maintainer approval.
-
-See [spec/MILESTONE.md](spec/MILESTONE.md) for release acceptance criteria.
+The [utility experiment](spec/utility-experiment.md) measures paired task outcomes
+under a declared sandbox policy. It does not establish general deployment safety
+or production approval costs. No mechanized proof or formal non-interference
+guarantee is claimed.
