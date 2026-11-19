@@ -265,7 +265,16 @@ impl Parser {
 
     fn parse_ref(&mut self) -> Result<Reference, ParseError> {
         self.expect(Kind::LPAREN, "'('")?;
-        if self.peek_kind() == Kind::IDENT && self.peek().value == "sha256" {
+        // Match the complete shorthand before treating sha256 as anonymous.
+        if matches!(
+            self.toks.get(self.i..self.i + 4),
+            Some([
+                Token { kind: Kind::IDENT, value },
+                Token { kind: Kind::COLON, .. },
+                Token { kind: Kind::HASH, .. },
+                Token { kind: Kind::RPAREN, .. },
+            ]) if value == "sha256"
+        ) {
             self.next();
             self.expect(Kind::COLON, "':'")?;
             let h = self.expect(Kind::HASH, "sha256 hex hash")?.value;

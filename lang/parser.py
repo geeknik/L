@@ -262,8 +262,11 @@ class _Parser:
     def parse_ref(self) -> Reference:
         self.expect('LPAREN', "'('")
         tok = self.peek()
-        # content-only reference: (sha256:<hash>)
-        if tok['kind'] == 'IDENT' and tok['value'] == 'sha256':
+        # Match the complete shorthand before treating sha256 as anonymous.
+        if (tok['kind'] == 'IDENT' and tok['value'] == 'sha256'
+                and self.peek(1)['kind'] == 'COLON'
+                and self.peek(2)['kind'] == 'HASH'
+                and self.peek(3)['kind'] == 'RPAREN'):
             self.next()
             self.expect('COLON', "':' in sha256:<hash>")
             content_hash = self.expect('HASH', 'sha256 hex hash')['value']

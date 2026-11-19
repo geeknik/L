@@ -72,6 +72,42 @@
     "principal_hash": "00112233"
   },
   {
+    "name": "principal_sha256",
+    "invariant": "I4",
+    "source": "COMMIT (sha256, sha256:abcdef00)",
+    "accept": true,
+    "principal": "sha256",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "name": "principal_sha256:files",
+    "invariant": "I4",
+    "source": "COMMIT (sha256:files, sha256:abcdef00)",
+    "accept": true,
+    "principal": "sha256:files",
+    "principal_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+    "name": "principal_sha256:00112233",
+    "invariant": "I5",
+    "source": "COMMIT (sha256:00112233, sha256:abcdef00)",
+    "accept": true,
+    "principal": "sha256:00112233",
+    "principal_hash": "00112233"
+  },
+  {
+    "name": "content_only_nonhash_refused",
+    "invariant": "I7",
+    "source": "COMMIT (sha256:files)",
+    "accept": false
+  },
+  {
+    "name": "content_only_extra_segment_refused",
+    "invariant": "I7",
+    "source": "COMMIT (sha256:abcdef00:files)",
+    "accept": false
+  },
+  {
     "name": "content_only_compat",
     "invariant": "I5",
     "source": "COMMIT (sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)",
