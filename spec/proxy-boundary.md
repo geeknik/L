@@ -11,3 +11,7 @@ and retained audit records contain only act types, decisions, and fixed
 error codes. No raw source, payload excerpt, or exception message is retained.
 Both sandbox and gate histories retain at most MAX_AUDIT_RECORDS entries.
 Explicit allow/log policies are diagnostic modes, not security enforcement.
+
+The stdio scaffold expects pipe-compatible stdin and stdout. Regular-file
+redirection is unsupported. If the transport cannot initialize, the CLI exits
+with status 1 and a fixed diagnostic on stderr before processing requests.

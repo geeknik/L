@@ -6,7 +6,8 @@ upstream requests nor authorizes real tool execution; use SecurityGate in a host
 
 Usage:
     python3 -m proxy.mcp_proxy --upstream stdio --policy deny
-    python3 -m proxy.mcp_proxy --upstream "ws://localhost:8080/mcp" --policy log
+
+Use pipe-compatible stdin and stdout for the stdio scaffold.
 """
 
 import sys
@@ -27,6 +28,10 @@ from lang.limits import (MAX_LINE_BYTES, MAX_ARG_DEPTH, MAX_ARG_NODES,
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 log = logging.getLogger('mcp_proxy')
+
+
+class StdioSetupError(Exception):
+    """The stdio transport could not be initialized."""
 
 def _reject_duplicate_keys(pairs: List[tuple[str, Any]]) -> dict[str, Any]:
     """object_pairs_hook that rejects duplicate keys at any nesting level.
@@ -405,11 +410,17 @@ class MCPProxy:
         # ValueError instead of an uncaught crash or unbounded memory use.
         reader = asyncio.StreamReader(limit=MAX_LINE_BYTES)
         protocol = asyncio.StreamReaderProtocol(reader)
-        await asyncio.get_event_loop().connect_read_pipe(lambda: protocol, sys.stdin)
-
-        writer_transport, writer_protocol = await asyncio.get_event_loop().connect_write_pipe(
-            asyncio.streams.FlowControlMixin, sys.stdout)
-        writer = asyncio.StreamWriter(writer_transport, writer_protocol, None, asyncio.get_event_loop())
+        loop = asyncio.get_running_loop()
+        input_transport = None
+        try:
+            input_transport, _ = await loop.connect_read_pipe(lambda: protocol, sys.stdin)
+            writer_transport, writer_protocol = await loop.connect_write_pipe(
+                asyncio.streams.FlowControlMixin, sys.stdout)
+        except (OSError, ValueError, NotImplementedError):
+            if input_transport is not None:
+                input_transport.close()
+            raise StdioSetupError('Could not initialize stdio transport') from None
+        writer = asyncio.StreamWriter(writer_transport, writer_protocol, None, loop)
 
         while True:
             try:
@@ -519,8 +530,8 @@ class MCPProxy:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description='MCP Proxy with L gate enforcement')
-    parser.add_argument('--upstream', required=True, help='Upstream MCP endpoint (stdio|ws://...)')
+    parser = argparse.ArgumentParser(description='Structural MCP inspection scaffold')
+    parser.add_argument('--upstream', required=True, help='Local stdio transport (requires pipes)')
     parser.add_argument('--policy', choices=['deny', 'allow', 'log'], default='deny',
                         help='Action when gate denies: deny=block, allow=pass, log=warn')
     args = parser.parse_args()
@@ -528,7 +539,11 @@ def main() -> None:
     proxy = MCPProxy(args.upstream, args.policy)
 
     if args.upstream == 'stdio':
-        asyncio.run(proxy.run_stdio())
+        try:
+            asyncio.run(proxy.run_stdio())
+        except StdioSetupError as error:
+            log.error('%s', error)
+            sys.exit(1)
     else:
         log.error(f"Transport '{args.upstream}' not implemented yet")
         sys.exit(1)

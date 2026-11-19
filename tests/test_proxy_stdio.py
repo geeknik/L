@@ -23,6 +23,7 @@ import sys
 import os
 import json
 import subprocess
+import tempfile
 import threading
 import time
 import unittest
@@ -36,6 +37,26 @@ PROXY_MODULE = 'proxy.mcp_proxy'
 
 class TestStdioTransportErrors(unittest.TestCase):
     """Run the real stdio loop and assert process stays alive across bad input."""
+
+    def test_regular_file_stdio_fails_with_fixed_diagnostic(self):
+        # I7: Unsupported transport fails before handling requests.
+        cmd = [sys.executable, '-m', PROXY_MODULE, '--upstream', 'stdio']
+        request = b'{"jsonrpc":"2.0","method":"tools/list","id":1}\n'
+        for stream in ('stdin', 'stdout'):
+            with self.subTest(stream=stream), tempfile.TemporaryFile() as file:
+                if stream == 'stdin':
+                    file.write(request)
+                    file.seek(0)
+                    result = subprocess.run(cmd, stdin=file, capture_output=True, timeout=15)
+                    self.assertEqual(result.stdout, b'')
+                else:
+                    result = subprocess.run(cmd, input=request, stdout=file,
+                                            stderr=subprocess.PIPE, timeout=15)
+                    file.seek(0)
+                    self.assertEqual(file.read(), b'')
+                self.assertEqual(result.returncode, 1)
+                self.assertIn(b'Could not initialize stdio transport', result.stderr)
+                self.assertNotIn(b'Traceback', result.stderr)
 
     @staticmethod
     def _run(lines, policy='deny'):

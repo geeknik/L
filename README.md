@@ -72,7 +72,7 @@ with separate OS identities and protected configuration.
 | `gate.security.SecurityGate` | Stateful authorization API; verifies signed authority and proposed actions |
 | `rust/` | Rust language, wire-format, authority, and security-gate counterparts |
 | `tsd-scan` | Structural language validation; does not authorize or execute tools |
-| `tsd-proxy` | Structural MCP/JSON-RPC inspection scaffold; does not forward upstream requests or enforce signed authority |
+| `tsd-proxy` | Structural MCP/JSON-RPC inspection scaffold over stdio pipes; does not forward upstream requests or enforce signed authority |
 
 For CLI options, run `uv run --locked tsd-host --help` or
 `uv run --locked tsd-authority --help`. The
