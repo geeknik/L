@@ -143,6 +143,10 @@ class TestReleaseCheck(unittest.TestCase):
         # I7: an RC must never silently pass the final-release metadata check.
         cases = [
             ('final', '1.0.0', '1.0.0', True),
+            ('final', '1.0.1', '1.0.1', True),
+            ('final', '1.0.1', '1.0.2', False),
+            ('final', '1.0.01', '1.0.01', False),
+            ('final', '1.1.0', '1.1.0', False),
             ('rc', '1.0.0rc1', '1.0.0-rc.1', True),
             ('final', '1.0.0rc1', '1.0.0-rc.1', False),
             ('rc', '1.0.0', '1.0.0', False),

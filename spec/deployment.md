@@ -62,9 +62,9 @@ containment. No automatic retry follows partial tool effects.
 
 ## Final release gates
 
-The final preflight requires `1.0.0` in both package manifests. The `--channel rc`
-preflight requires Python `1.0.0rc1` and Rust `1.0.0-rc.1`; mixed channels or other
-RC numbers are rejected. Approve the sandbox policy and utility criteria before
+The final preflight requires the same stable `1.0.x` version in both package
+manifests. The `--channel rc` preflight requires Python `1.0.0rc1` and Rust
+`1.0.0-rc.1`. Approve the sandbox policy and utility criteria before
 measurement, as described in [utility-experiment.md](utility-experiment.md).
 Commit the complete protocol before starting paired baseline/gated tasks, and
 independently inspect retained traces. No fabricated results may substitute for
@@ -80,7 +80,7 @@ Do not rewrite a measured protocol or traces to relabel an earlier result.
 Choose the intended release channel before the last measurement:
 
 - For RC publication, freeze and measure the RC source and use `--channel rc`.
-- For final 1.0 publication, first set both manifests to `1.0.0`, refresh both
+- For a stable 1.0 release, first set both manifests to the target version, refresh both
   lockfiles, complete code changes and verification, and commit that source.
   Freeze the protocol against that commit, run and retain the paired experiment,
   then use the default final preflight. An RC measurement cannot certify a later

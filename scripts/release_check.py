@@ -60,11 +60,15 @@ def blockers(root: Path, results: Path | None, trace_root: Path | None = None,
     try:
         python = tomllib.loads((root/'pyproject.toml').read_text())['project']
         rust = tomllib.loads((root/'rust/Cargo.toml').read_text())['package']
-        expected = {'final': ('1.0.0', '1.0.0'), 'rc': ('1.0.0rc1', '1.0.0-rc.1')}
-        if channel not in expected:
+        versions = (python['version'], rust['version'])
+        if channel == 'final':
+            if versions[0] != versions[1] or re.fullmatch(r'1\.0\.(?:0|[1-9][0-9]*)', versions[0]) is None:
+                failures.append('Package versions do not match the selected release channel')
+        elif channel == 'rc':
+            if versions != ('1.0.0rc1', '1.0.0-rc.1'):
+                failures.append('Package versions do not match the selected release channel')
+        else:
             failures.append('Unknown release channel')
-        elif (python['version'], rust['version']) != expected[channel]:
-            failures.append('Package versions do not match the selected release channel')
         license_id = python.get('license')
         if (license_id not in ('MIT', 'Apache-2.0', 'LicenseRef-Proprietary')
                 or rust.get('license') != license_id or not (root/'LICENSE').is_file()
@@ -111,7 +115,7 @@ def main() -> int:
     parser.add_argument('--results',type=Path,help='Real paired utility evidence JSON')
     parser.add_argument('--trace-root',type=Path,help='Directory containing retained trace artifacts')
     parser.add_argument('--channel', choices=('final', 'rc'), default='final',
-                        help='Require final 1.0.0 versions (default), or the first RC versions')
+                        help='Require matching stable 1.0.x versions (default), or the first RC versions')
     args = parser.parse_args()
     failures = blockers(ROOT,args.results,args.trace_root,args.channel)
     if failures:
