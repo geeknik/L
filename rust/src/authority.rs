@@ -2,6 +2,7 @@
 
 use std::collections::{HashMap, HashSet};
 use ed25519_dalek::{Signature, Signer, SigningKey, VerifyingKey};
+use serde::de::IntoDeserializer;
 use serde::{Deserialize, Serialize};
 use crate::limits::{MAX_AUTHORITY_BYTES, MAX_SECURITY_RECORDS};
 
@@ -10,6 +11,11 @@ pub const DOMAIN: &[u8] = b"TSD-AUTHORITY-v1\0";
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Integrity { #[default] Low, Medium, High, Critical }
+
+fn deserialize_integrity<'de, D: serde::Deserializer<'de>>(deserializer: D) -> Result<Integrity, D::Error> {
+    let name = String::deserialize(deserializer)?;
+    Integrity::deserialize(name.into_deserializer())
+}
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -22,6 +28,7 @@ pub struct Claims {
     pub scope: String,
     pub tool_principal: String,
     pub tool_hash: String,
+    #[serde(deserialize_with = "deserialize_integrity")]
     pub integrity: Integrity,
     pub action_hash: String,
     pub issued_at: i64,
@@ -105,14 +112,23 @@ fn strict_point(bytes: &[u8; 32]) -> Result<VerifyingKey, SecurityError> {
     Ok(key)
 }
 
-pub fn verify(envelope: &Envelope, trust: &HashMap<String, TrustKey>) -> Result<Claims, SecurityError> {
-    if envelope.payload.len() > MAX_AUTHORITY_BYTES || envelope.signature.len() != 64 {
+fn decode_claims(payload: &[u8]) -> Result<Claims, SecurityError> {
+    // Derived struct deserialization also accepts sequences. The wire contract
+    // admits only objects, and typed decoding still checks all fields.
+    if payload.len() > MAX_AUTHORITY_BYTES
+        || payload.iter().copied().find(|b| !b.is_ascii_whitespace()) != Some(b'{') {
         return Err(invalid());
     }
+    let claims = serde_json::from_slice(payload).map_err(|_| invalid())?;
+    validate_claims(&claims)?;
+    Ok(claims)
+}
+
+pub fn verify(envelope: &Envelope, trust: &HashMap<String, TrustKey>) -> Result<Claims, SecurityError> {
+    if envelope.signature.len() != 64 { return Err(invalid()); }
     // Decode only for key lookup/schema checks. No decoded claim is trusted until
     // strict verification of the exact received bytes succeeds.
-    let claims: Claims = serde_json::from_slice(&envelope.payload).map_err(|_| invalid())?;
-    validate_claims(&claims)?;
+    let claims = decode_claims(&envelope.payload)?;
     let policy = trust.get(&claims.issuer).ok_or_else(invalid)?;
     let key = policy.validated_key()?;
     // Validate R with the library's point operations too. This rejects mixed
@@ -143,5 +159,32 @@ impl Authority {
         if payload.len() > MAX_AUTHORITY_BYTES { return Err(invalid()); }
         let signature = self.key.sign(&signed_bytes(&payload)).to_bytes().to_vec();
         Ok(Envelope { payload, signature })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::Value;
+
+    #[test]
+    fn claims_require_an_object_with_string_integrity() {
+        // I7: Schema rejection is independent of signing or installing authority.
+        let fixture: Value = serde_json::from_str(include_str!("../../conformance/security_vectors.json")).unwrap();
+        let payload = fixture["grant"]["payload_utf8"].as_str().unwrap();
+        let claims = decode_claims(payload.as_bytes()).unwrap();
+
+        let positional = serde_json::json!([
+            claims.version, claims.kind, claims.issuer, claims.subject, claims.capability,
+            claims.scope, claims.tool_principal, claims.tool_hash, claims.integrity,
+            claims.action_hash, claims.issued_at, claims.expires_at, claims.nonce,
+        ]);
+        assert!(decode_claims(positional.to_string().as_bytes()).is_err());
+        let tagged = payload.replace("\"integrity\":\"high\"", "\"integrity\":{\"high\":null}");
+        assert!(decode_claims(tagged.as_bytes()).is_err());
+        let negative_zero = payload.replace("\"issued_at\":100", "\"issued_at\":-0");
+        assert!(decode_claims(negative_zero.as_bytes()).is_err());
+        let zero = payload.replace("\"issued_at\":100", "\"issued_at\":0");
+        assert_eq!(decode_claims(zero.as_bytes()).unwrap().issued_at, 0);
     }
 }

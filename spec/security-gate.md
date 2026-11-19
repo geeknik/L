@@ -25,7 +25,8 @@ custom curve/signature code. Sign the exact UTF-8 payload bytes prefixed by
 the transport representation is separate from the L canonical wire format.
 Do not normalize a payload before checking its signature.
 
-The payload is a JSON object with exactly these fields (duplicates rejected):
+The payload is a JSON object with exactly these fields (duplicates rejected).
+Integer fields reject the negative-zero spelling `-0`.
 
 | Field | Contract |
 | --- | --- |
@@ -37,7 +38,7 @@ The payload is a JSON object with exactly these fields (duplicates rejected):
 | scope | nonempty ASCII dot-separated alphanumeric/underscore segments |
 | tool_principal | nonempty ASCII colon-separated alphanumeric/underscore segments |
 | tool_hash | 64 lowercase hexadecimal characters |
-| integrity | low, medium, high, or critical |
+| integrity | JSON string: low, medium, high, or critical |
 | action_hash | SHA-256 of exact UTF-8 single-DIRECT source for endorse; empty otherwise |
 | issued_at | integer epoch seconds, 0..=i64::MAX |
 | expires_at | integer epoch seconds, issued_at < expires_at <= i64::MAX |

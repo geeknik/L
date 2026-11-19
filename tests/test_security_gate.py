@@ -54,6 +54,18 @@ class TestSecurityGate(unittest.TestCase):
         claims.update(changes)
         self.gate.apply(self.signed(**claims), 110)
 
+    def test_decode_requires_an_object_with_string_integrity(self):
+        # I7: Schema rejection is independent of signing or installing authority.
+        valid = json.dumps(dict(self.base, issued_at=0), separators=(',', ':'))
+        self.assertEqual(decode_claims(valid.encode()).issued_at, 0)
+        for raw in (
+            json.dumps(list(self.base.values())),
+            json.dumps(dict(self.base, integrity={'high': None})),
+            valid.replace('"issued_at":0', '"issued_at":-0'),
+        ):
+            with self.subTest(payload=raw), self.assertRaises(AuthorityError):
+                decode_claims(raw.encode())
+
     def test_grant_endorse_one_use_revoke_lifecycle(self):
         self.deny('AUTH.REQUIRED', self.gate.execute, self.source, 110)
         self.grant()

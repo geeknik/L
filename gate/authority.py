@@ -100,13 +100,20 @@ def _reject_number(value: str) -> object:
     raise AuthorityError()
 
 
+def _parse_integer(value: str) -> int:
+    if value == '-0':
+        raise AuthorityError()
+    return int(value)
+
+
 def decode_claims(payload: bytes) -> Claims:
     """Validate bounded untrusted claims; this alone grants no authority."""
     if type(payload) is not bytes or not 0 < len(payload) <= MAX_AUTHORITY_BYTES:
         raise AuthorityError()
     try:
         values = json.loads(payload.decode('utf-8'), object_pairs_hook=_pairs,
-                            parse_constant=_reject_number, parse_float=_reject_number)
+                            parse_constant=_reject_number, parse_float=_reject_number,
+                            parse_int=_parse_integer)
         if not isinstance(values, dict) or set(values) != set(Claims.__dataclass_fields__):
             raise AuthorityError()
         for key in ('version', 'issued_at', 'expires_at'):
