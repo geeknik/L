@@ -7,7 +7,8 @@ class TestArtifactPaths(unittest.TestCase):
     def test_reject_local_state_and_unsafe_paths(self):
         for name in ('/tmp/source.py', '../secret', 'pkg/.env', 'pkg/.env.local',
                      'pkg/.git/config', 'pkg/.venv/key', 'pkg/rust/target/binary',
-                     'pkg/__pycache__/a.pyc', 'pkg/AGENTS.md', 'pkg/CLAUDE.md'):
+                     'pkg/__pycache__/a.pyc', 'pkg/AGENTS.md', 'pkg/CLAUDE.md',
+                     'pkg/.local/note.md', 'pkg/release-evidence/results.json'):
             with self.subTest(name=name), self.assertRaises(ValueError):
                 check_paths([name])
 

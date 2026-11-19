@@ -28,7 +28,7 @@ include = [
     "/lang", "/gate", "/proxy", "/cli", "/spec", "/tests", "/conformance",
     "/demos", "/benchmarks", "/scripts", "/rust/src", "/rust/tests",
     "/rust/examples", "/rust/Cargo.toml", "/rust/Cargo.lock", "/pyproject.toml",
-    "/uv.lock", "/README.md", "/DESIGN.md", "/CALCULUS.md", "/LICENSE",
+    "/uv.lock", "/README.md", "/DESIGN.md", "/CALCULUS.md", "/LICENSE", "/SECURITY.md",
     "/.github/workflows",
 ]
 

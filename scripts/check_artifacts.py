@@ -9,7 +9,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 FORBIDDEN = {'.git', '.venv', '__pycache__', '.code-review-graph', 'AGENTS.md',
-             'CLAUDE.md', '.env', 'target', '.mypy_cache'}
+             'CLAUDE.md', '.env', 'target', '.mypy_cache', '.local', 'release-evidence'}
 
 
 def check_paths(names: list[str]) -> None:
@@ -50,6 +50,9 @@ def main() -> int:
                 check_paths([item.name for item in members])
                 if any(not (item.isfile() or item.isdir()) for item in members):
                     raise ValueError('Unsafe source member')
+                if not any(item.isfile() and Path(item.name).parts[1:] == ('SECURITY.md',)
+                           for item in members):
+                    raise ValueError('Source distribution is missing SECURITY.md')
             environment = work/'environment'
             run(['uv', 'venv', '--python', sys.executable, str(environment)], work)
             requirements = work/'requirements.txt'
