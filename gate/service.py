@@ -72,8 +72,9 @@ class HostSession:
         try:
             if self.closed:
                 raise ValueError()
-            # Apply identical bounds even to callers that bypass the byte transport.
-            request = decode_object(encode_object(request))
+            # Bound direct calls without expanding valid UTF-8 wire requests
+            # into longer ASCII escape sequences.
+            request = decode_object(encode_object(request, ensure_ascii=False))
             op = request.get('op')
             if op == 'info':
                 _fields(request, {'op'})

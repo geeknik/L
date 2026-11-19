@@ -77,11 +77,11 @@ def decode_object(raw: bytes) -> dict[str, Any]:
         raise ProtocolError() from None
 
 
-def encode_object(value: dict[str, Any]) -> bytes:
+def encode_object(value: dict[str, Any], *, ensure_ascii: bool = True) -> bytes:
     try:
         _validate(value)
-        raw = json.dumps(value, ensure_ascii=True, allow_nan=False,
-                         separators=(',', ':'), sort_keys=True).encode('ascii')
+        raw = json.dumps(value, ensure_ascii=ensure_ascii, allow_nan=False,
+                         separators=(',', ':'), sort_keys=True).encode('utf-8')
         if len(raw) > MAX_LINE_BYTES:
             raise ProtocolError()
         return raw

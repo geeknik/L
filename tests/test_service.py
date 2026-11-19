@@ -134,6 +134,31 @@ class TestOwnedHost(unittest.TestCase):
                 self.assertEqual(err, b'')
         self.assertFalse(self.effect.exists())
 
+    def test_utf8_frame_boundary(self):
+        # I6/I7: count received UTF-8 bytes, excluding the line terminator.
+        request = {'op': 'execute', 'source': 'COMMIT (user:g, sha256:' + 'a' * 64 + ')',
+                   'inputs': ['']}
+
+        def frame():
+            return json.dumps(request, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
+
+        remaining = MAX_LINE_BYTES - len(frame())
+        request['inputs'][0] = 'é' * (remaining // 2) + 'a' * (remaining % 2)
+        self.assertEqual(len(frame()), MAX_LINE_BYTES)
+        allowed = {'status': 'ALLOW', 'result': None}
+        denied = {'status': 'DENY', 'error': 'Invalid request'}
+        session = load_session(self.config_path)
+        for extra, expected, status in (('', allowed, 0), ('a', denied, 1)):
+            with self.subTest(extra=extra):
+                request['inputs'][0] += extra
+                proc = self.start()
+                out, err = proc.communicate(frame() + b'\n', timeout=5)
+                self.assertEqual(json.loads(out), expected)
+                self.assertEqual(proc.returncode, status)
+                self.assertEqual(err, b'')
+                self.assertEqual(session.request(request), expected)
+        self.assertFalse(self.effect.exists())
+
     def test_stalled_frame_fails_closed(self):
         session = load_session(self.config_path)
         read_fd, write_fd = os.pipe()

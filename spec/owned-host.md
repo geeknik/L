@@ -25,8 +25,11 @@ retry after partial effects, or transcript replay interface is supplied.
 ## Framing
 
 One strict UTF-8 JSON object per LF-terminated frame, bounded by MAX_LINE_BYTES
-excluding LF, MAX_ARG_DEPTH and MAX_ARG_NODES. Duplicate keys, lone surrogates,
-non-object roots, noninteger numbers and integers outside signed i64 refuse.
+of received bytes excluding LF, plus MAX_ARG_DEPTH and MAX_ARG_NODES. Direct
+calls to `HostSession.request` use the same size bound on compact UTF-8 JSON.
+Canonical tool definitions and responses retain the ASCII JSON encoding.
+Duplicate keys, lone surrogates, non-object roots, noninteger numbers and
+integers outside signed i64 refuse.
 Every read and write has a monotonic deadline at most MAX_PROCESS_SECONDS;
 partial EOF, overlong frames and stalled peers terminate the session with a
 fixed sanitized error where possible. No recovery skips arbitrary input bytes.
